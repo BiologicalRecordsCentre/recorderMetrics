@@ -2,11 +2,11 @@ Package: recorderMetrics
 Type: Package
 Title: Calculate recorder behaviour metrics for participants of citizen science projects
 Version: 0.2
-Date: 2018-08-29
+Date: 2018-09-07
 LazyData: true
 Authors@R: c(person("Tom", "August", role = c("aut", "cre"), email = "tomaug@ceh.ac.uk"),
              person("Michael", "Pocock", role = c("aut")))
 Maintainer: Tom August <tomaug@ceh.ac.uk>
-Description: This package takes data from citizen science projects that has 'what' (typically species), 'where', 'when', and 'who' fields. From this data the various functions in this package create metrics that quantify the behaviour of the participants (the 'who'). 
+Description: This package takes data from citizen science projects that have 'what' (typically species), 'where', 'when', and 'who' fields. From this data the various functions in this package create metrics that quantify the behaviour of the participants (the 'who'). 
 License: GPL
 RoxygenNote: 6.0.1
