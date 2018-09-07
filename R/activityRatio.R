@@ -1,0 +1,88 @@
+#' Calculate activity ratio metrics
+#' 
+#' This function takes in data for a recorder and calculates the activity ratio, total duration and number of active days
+#' 
+#' @param recorder_name the name of the recorder for whom you want to calculate the metrics
+#' @param data the data.frame of recording information
+#' @param recorder_col the name of the column that contains the recorder names
+#' @param date_col the name of the column that contains the date. This must be formatted as a date
+#'  
+#' @export
+#' 
+#' @examples
+#' \dontrun{
+#' 
+#' # load example data
+#' head(cit_sci_data)
+#' 
+#' ar <- activityRatio(recorder_name = 3007,
+#'                     data = cit_sci_data,
+#'                     recorder_col = 'recorder',
+#'                     date_col = 'date')
+#'                     
+#' # Run the metric for all recorders
+#' ar_all <- lapply(unique(cit_sci_data$recorder),
+#'                  FUN = activityRatio,
+#'                  data = cit_sci_data,
+#'                  recorder_col = 'recorder',
+#'                  date_col = 'date')
+#'
+#' # summarise as one table
+#' ar_all_sum <- do.call(rbind, ar_all)
+#'
+#' hist(ar_all_sum$active_days, breaks = 80)
+#' }
+#' 
+#' @return A data.frame with four columns
+#' \itemize{
+#'  \item{\code{recorder} - }{The name of the recorder, as given in the recorder_name argument}
+#'  \item{\code{activity_ratio} - }{The proportion of days on which the volunteer was active in relation to the total days he/she remained linked to the project (i.e. \code{active_days} / \code{total_duration})}
+#'  \item{\code{total_duration} - }{The total number of days the volunteer was involved in the project, calculated as the number of days from the first record they submitted to the last (inclusive)}
+#'  \item{\code{active_days} - }{The total number of unique dates on which observations were made}
+#' }
+
+activityRatio <-
+function(recorder_name,
+         data,
+         recorder_col = 'recorders',
+         date_col = 'date_start'){
+  
+  # check date column
+  if(!inherits(data[, date_col], 'Date')){
+    stop('Your date column is not a date')
+  }
+  
+  # check name
+  if(!recorder_name %in% data[,recorder_col]) stop(paste(recorder_name, 'does not appear in the recorder column of your data'))
+  
+  # Get the recorders data
+  data <- data[data[,recorder_col] == recorder_name, ]
+  
+  # Some people might have no data from the summer period
+  if(nrow(data) < 1){
+    
+    return(data.frame(recorder = recorder_name,
+                      activity_ratio = NA,
+                      total_duration = NA,
+                      active_days = NA))
+  } else {
+    
+  # Get unique dates
+  dates <- unique(data[,date_col])
+  
+  # Get the first and last date
+  first_last <- range(dates)
+  
+  # Total duration of this recorder
+  duration <- as.numeric(first_last[2] - first_last[1]) + 1 
+  
+  # calculate ratio
+  activity_ratio <- length(dates)/duration
+  
+  # return
+  return(data.frame(recorder = recorder_name,
+                    activity_ratio = activity_ratio,
+                    total_duration = duration,
+                    active_days = length(dates)))
+  }
+}
