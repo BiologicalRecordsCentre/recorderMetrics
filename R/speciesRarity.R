@@ -16,14 +16,14 @@
 #' head(cit_sci_data)
 #' 
 #' # Run for a single recorder
-#' SR <- species_rank(recorder_name = 3007,
+#' SR <- speciesRarity(recorder_name = 3007,
 #'                    data = cit_sci_data, 
 #'                    sp_col = 'species',
 #'                    recorder_col = 'recorder')
 #'                    
 #' # Run the metric for all recorders
 #' SR_all <- lapply(unique(cit_sci_data$recorder),
-#'                  FUN = species_rank,
+#'                  FUN = speciesRarity,
 #'                  data = cit_sci_data,
 #'                  sp_col = 'species',
 #'                  recorder_col = 'recorder')
@@ -56,7 +56,7 @@
 #'  \item{\code{n} - }{The total number of observations made by this recorder}
 #' }
 
-species_rank <-
+speciesRarity <-
 function(recorder_name,
          data, 
          sp_col = 'preferred_taxon',

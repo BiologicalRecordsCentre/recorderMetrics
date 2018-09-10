@@ -34,10 +34,10 @@
 #' # I want to change to UK national grid as that is in meters
 #' UKNG <- "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs"
 #'
-#' SB <- spatial_behaviour(recorder_name = 3007,
+#' SB <- spatialBehaviour(recorder_name = 3007,
 #'                        data = cit_sci_data, 
 #'                        crs = WGS_84,
-#'                        new_crs = NULL,
+#'                        new_crs = UKNG,
 #'                        y_col = 'lat',
 #'                        x_col = 'long',
 #'                        recorder_col = 'recorder')
@@ -47,7 +47,7 @@
 #'
 #' # Run for more than one recorder, this can be slow 
 #' SB_all <- lapply(unique(cit_sci_data$recorder)[1:10],
-#'                 FUN = spatial_behaviour, 
+#'                 FUN = spatialBehaviour, 
 #'                 data = cit_sci_data, 
 #'                 crs = WGS_84,
 #'                 new_crs = UKNG,
@@ -75,7 +75,8 @@
 #'  \item{\code{n} - }{The total number of observations made by this recorder}
 #' }
 
-spatial_behaviour <- function(recorder_name,
+
+spatialBehaviour <- function(recorder_name,
                               data,
                               y_col,
                               x_col,

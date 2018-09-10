@@ -15,7 +15,7 @@
 #' # load example data
 #' head(cit_sci_data)
 #' 
-#' TB <- taxa_breadth(recorder_name = 3007,
+#' TB <- taxaBreadth(recorder_name = 3007,
 #' data = cit_sci_data,
 #' sp_col = 'species',
 #' recorder_col = 'recorder')
@@ -24,7 +24,7 @@
 #' 
 #' # Run for more than one recorder, this can be slow 
 #' TB_all <- lapply(unique(cit_sci_data$recorder),
-#'                  FUN = taxa_breadth, 
+#'                  FUN = taxaBreadth, 
 #'                  data = cit_sci_data, 
 #'                  sp_col = 'species',
 #'                  recorder_col = 'recorder')
@@ -46,7 +46,7 @@
 #' }
 #'
 
-taxa_breadth <- function(recorder_name,
+taxaBreadth <- function(recorder_name,
                          data,
                          sp_col = 'preferred_taxon',
                          recorder_col = 'recorders'){
