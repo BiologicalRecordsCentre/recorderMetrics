@@ -25,7 +25,7 @@ weeklyDevotedDays(recorder_name, data, recorder_col = "recorders",
 }
 }
 \description{
-These metrics describe the 'expericence' the recorder has had recording species within the group.
+These metrics describe frequency of recording in weeks in which the recorder made observations.
 }
 \examples{
 \dontrun{

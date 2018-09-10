@@ -1,6 +1,6 @@
 #' Metrics identifying the breadth and proportion of taxa recorded 
 #' 
-#' These metrics describe the 'expericence' the recorder has had recording species within the group.
+#' These metrics describe frequency of recording in weeks in which the recorder made observations.
 #'
 #' @param recorder_name the name of the recorder for whom you want to calculate the metrics
 #' @param data the data.frame of recording information

@@ -26,7 +26,7 @@ A data.frame with four columns is returned.
 }
 }
 \description{
-These metrics describe the 'expericence' the recorder has had recording species within the group.
+These metrics describe the 'experience' the recorder has had recording species within the group.
 }
 \examples{
 \dontrun{

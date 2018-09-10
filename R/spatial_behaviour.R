@@ -7,13 +7,13 @@
 #' @param y_col the name of the column that contains the y coordinate (e.g. latitude) of the observation. This should be a numeric.
 #' @param x_col the name of the column that contains the x coordinate (e.g. longitude)  of the observation. This should be a numeric.
 #' @param crs the proj4 string that describes the projection your data are using. For GPS lat long this is "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs". You can find more at \url{http://spatialreference.org/}
-#' @param new_crs the proj4 string that the decribes the coordinate system your data should be reproject to. THIS IS IMPORTANT. Your data must be on a projection that has units in meters so that results are comparable to other studies. An appropriate system in the UK is the UK national grid "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs". If your orignal crs (given in the arguement \code{crs}), already has untis in meters then set \code{new_crs = NULL}. WARNING: if you set this to NULL but your coordinate system is not in units of meters you will likely have errors.
+#' @param new_crs the proj4 string that the describes the coordinate system your data should be reprojected to. THIS IS IMPORTANT. Your data must be on a projection that has units in meters so that results are comparable to other studies. An appropriate system in the UK is the UK national grid "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs". If your original crs (given in the argument \code{crs}), already has units in meters then set \code{new_crs = NULL}. WARNING: if you set this to NULL but your coordinate system is not in units of meters you will likely have errors.
 #' @param recorder_col the name of the column that contains the recorder names
 #' @param upper_percentile The percentile used to create a polygon that encapsulates a proportion of the recorders observations using the kernel method (\code{?adehabitatHR::kernelUD}). This is used to estimate the area covered as will as the ratio of core to total area covered, see \code{Value}.
 #' @param lower_percentile see \code{upper_percentile}
 #' @param h a numeric smoothing parameter for drawing the kernels. See \code{?adehabitatHR::kernelUD} for details.
 #' @param res a numeric giving the resolution for kernel estimation.
-#' @param threshold If there are less than this number of observations NA values witll be returned for the metrics. Default is 5
+#' @param threshold If there are less than this number of observations NA values will be returned for the metrics. Default is 5
 #'    
 #' @export
 #' @import adehabitatHR
