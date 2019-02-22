@@ -8,5 +8,6 @@ Authors@R: c(person("Tom", "August", role = c("aut", "cre"), email = "tomaug@ceh
              person("Michael", "Pocock", role = c("aut")))
 Maintainer: Tom August <tomaug@ceh.ac.uk>
 Description: This package takes data from citizen science projects that have 'what' (typically species), 'where', 'when', and 'who' fields. From this data the various functions in this package create metrics that quantify the behaviour of the participants (the 'who'). 
+Depends: adehabitatHR, raster
 License: GPL
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

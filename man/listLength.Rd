@@ -23,7 +23,7 @@ listLength(recorder_name, data, threshold = 10, plot = FALSE,
 
 \item{recorder_col}{the name of the column that contains the recorder names}
 
-\item{location_col}{the name of the column that contains the date. This must be formatted as a date}
+\item{location_col}{the name of the column that contains the location. This is a character, such as a grid reference and should be representative of the scale at which recording is done over a single day, typically 1km-square is used.}
 }
 \value{
 A data.frame with seven columns
@@ -48,6 +48,8 @@ head(cit_sci_data)
 
 # Location might be a site name column in your data or a unique combination of lat and long
 # Our data is missing a location column so we will use lat and long
+# It might be more sensible to convert lat long to a grid reference and 
+# use a 1 km square grid reference to represent a site 
 cit_sci_data$location <- paste(round(cit_sci_data$lat, 4), round(cit_sci_data$long, 4))
 
 # run for one recorder

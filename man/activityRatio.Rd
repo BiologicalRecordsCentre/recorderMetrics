@@ -37,7 +37,7 @@ This function takes in data for a recorder and calculates the activity ratio, to
 head(cit_sci_data)
 
 # Get the summer period
-SD <- summerData(cit_sci_data)
+SD <- summerData(cit_sci_data, date_col = 'date')
 
 ar <- activityRatio(recorder_name = 3007,
                     data = cit_sci_data,
