@@ -4,10 +4,11 @@
 \alias{summerData}
 \title{Identify data that is recorded during the summer period}
 \usage{
-summerData(data, probs = c(0.025, 0.975), date_col = "date_start")
+summerData(input_data, probs = c(0.025, 0.975),
+  date_col = "date_start")
 }
 \arguments{
-\item{data}{the data.frame of recording information}
+\item{input_data}{the data.frame of recording information}
 
 \item{probs}{A vector of two proportions giving the positions of the start and end of summer. Default value of 0.025 and 0.975 mean that the central 95 percent of day in any year is classed as the recording period.}
 
@@ -33,7 +34,7 @@ Recorder metrics can be biased if there are annual breaks in data collection. In
 head(cit_sci_data)
 
 # Subset this data to summer periods only
-SD <- summerData(data = cit_sci_data,
+SD <- summerData(input_data = cit_sci_data,
                  probs = c(0.025, 0.975),
                  date_col = 'date')
 

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate activity ratio metrics — activityRatio • recorderMetrics</title>
+<title>Metrics identifying the breadth and proportion of taxa recorded — taxaBreadth • recorderMetrics</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Calculate activity ratio metrics — activityRatio" />
+<meta property="og:title" content="Metrics identifying the breadth and proportion of taxa recorded — taxaBreadth" />
 
-<meta property="og:description" content="This function takes in data for a recorder and calculates the activity ratio, total duration and number of active days" />
+<meta property="og:description" content="These metrics describe the 'experience' the recorder has had recording species within the group." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -94,19 +94,19 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate activity ratio metrics</h1>
+    <h1>Metrics identifying the breadth and proportion of taxa recorded</h1>
     
-    <div class="hidden name"><code>activityRatio.Rd</code></div>
+    <div class="hidden name"><code>taxaBreadth.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function takes in data for a recorder and calculates the activity ratio, total duration and number of active days</p>
+    <p>These metrics describe the 'experience' the recorder has had recording species within the group.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>activityRatio</span>(<span class='no'>recorder_name</span>, <span class='no'>data</span>, <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>"recorders"</span>,
-  <span class='kw'>date_col</span> <span class='kw'>=</span> <span class='st'>"date_start"</span>, <span class='kw'>summer_days</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>taxaBreadth</span>(<span class='no'>recorder_name</span>, <span class='no'>data</span>, <span class='kw'>sp_col</span> <span class='kw'>=</span> <span class='st'>"preferred_taxon"</span>,
+  <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>"recorders"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -120,26 +120,22 @@
       <td><p>the data.frame of recording information</p></td>
     </tr>
     <tr>
+      <th>sp_col</th>
+      <td><p>the name of the column that contains the species names</p></td>
+    </tr>
+    <tr>
       <th>recorder_col</th>
       <td><p>the name of the column that contains the recorder names</p></td>
-    </tr>
-    <tr>
-      <th>date_col</th>
-      <td><p>the name of the column that contains the date. This must be formatted as a date</p></td>
-    </tr>
-    <tr>
-      <th>summer_days</th>
-      <td><p>Activity ratio is only calculated for the summmer period is this parameter is provided. This is a three column data.frame: year, Jday_start (numeric Julian day of the first day of summer), Jday_end (numeric Julian day of the last day of summer). These are returned as an attribute from <code>summerData</code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.frame with four columns</p><ul>
+    <p>A data.frame with four columns is returned.</p><ul>
 <li><p><code>recorder</code> - The name of the recorder, as given in the recorder_name argument</p></li>
-<li><p><code>activity_ratio</code> - The proportion of days on which the volunteer was active in relation to the total days he/she remained linked to the project (i.e. <code>active_days</code> / <code>duration</code>. Duration is either the number of days elapsed from their first to last record, or if <code>summer_days</code> is provided it is the the number of days elapsed from their first to last record that fall into the summer periods)</p></li>
-<li><p><code>total_duration</code> - The total number of days the volunteer was involved in the project, calculated as the number of days from the first record they submitted to the last (inclusive)</p></li>
-<li><p><code>active_days</code> - The total number of unique dates on which observations were made</p></li>
+<li><p><code>taxa_breadth</code> - The total number of species recorded by this recorder</p></li>
+<li><p><code>taxa_prop</code> - The proportion of species recorded by this species. Calculated as <code>taxa_breadth</code> divided by the total number of species recorded in <code>data</code>.</p></li>
+<li><p><code>n</code> - The total number of observations made by this recorder</p></li>
 </ul>
 
     
@@ -149,27 +145,26 @@
 <span class='co'># load example data</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>cit_sci_data</span>)
 
-<span class='co'># Get the summer period</span>
-<span class='no'>SD</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='summerData.html'>summerData</a></span>(<span class='no'>cit_sci_data</span>, <span class='kw'>date_col</span> <span class='kw'>=</span> <span class='st'>'date'</span>)
+<span class='no'>TB</span> <span class='kw'>&lt;-</span> <span class='fu'>taxaBreadth</span>(<span class='kw'>recorder_name</span> <span class='kw'>=</span> <span class='fl'>3007</span>,
+<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>cit_sci_data</span>,
+<span class='kw'>sp_col</span> <span class='kw'>=</span> <span class='st'>'species'</span>,
+<span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>'recorder'</span>)
 
-<span class='no'>ar</span> <span class='kw'>&lt;-</span> <span class='fu'>activityRatio</span>(<span class='kw'>recorder_name</span> <span class='kw'>=</span> <span class='fl'>3007</span>,
-                    <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>cit_sci_data</span>,
-                    <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>'recorder'</span>,
-                    <span class='kw'>date_col</span> <span class='kw'>=</span> <span class='st'>'date'</span>,
-                    <span class='kw'>summer_days</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/attr'>attr</a></span>(<span class='no'>SD</span>, <span class='st'>'cutoffs'</span>))
+<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>TB</span>)
 
-<span class='co'># Run the metric for all recorders</span>
-<span class='no'>ar_all</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>lapply</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/unique'>unique</a></span>(<span class='no'>cit_sci_data</span>$<span class='no'>recorder</span>),
-                 <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='no'>activityRatio</span>,
+<span class='co'># Run for more than one recorder, this can be slow </span>
+<span class='no'>TB_all</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>lapply</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/unique'>unique</a></span>(<span class='no'>cit_sci_data</span>$<span class='no'>recorder</span>),
+                 <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='no'>taxaBreadth</span>,
                  <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>cit_sci_data</span>,
-                 <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>'recorder'</span>,
-                 <span class='kw'>date_col</span> <span class='kw'>=</span> <span class='st'>'date'</span>,
-                 <span class='kw'>summer_days</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/attr'>attr</a></span>(<span class='no'>SD</span>, <span class='st'>'cutoffs'</span>))
+                 <span class='kw'>sp_col</span> <span class='kw'>=</span> <span class='st'>'species'</span>,
+                 <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>'recorder'</span>)
 
 <span class='co'># summarise as one table</span>
-<span class='no'>ar_all_sum</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/do.call'>do.call</a></span>(<span class='no'>rbind</span>, <span class='no'>ar_all</span>)
+<span class='no'>TB_all_sum</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/do.call'>do.call</a></span>(<span class='no'>rbind</span>, <span class='no'>TB_all</span>)
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/hist'>hist</a></span>(<span class='no'>ar_all_sum</span>$<span class='no'>active_days</span>, <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>80</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/hist'>hist</a></span>(<span class='no'>TB_all_sum</span>$<span class='no'>taxa_prop</span>, <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>40</span>)
+
+
 <span class='co'># }</span><div class='input'>
 </div></pre>
   </div>

@@ -1,6 +1,6 @@
 #' Calculate periodicity metrics
 #' 
-#' This function takes in data for a recorder and calculates the list periodicity metrics. 
+#' This function takes in data for a recorder and calculates the periodicity metrics. 
 #' 
 #' @param recorder_name the name of the recorder for whom you want to calculate the metrics
 #' @param data the data.frame of recording information

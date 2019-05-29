@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate activity ratio metrics — activityRatio • recorderMetrics</title>
+<title>Calculate the rarity of species recorded by a volunteer — speciesRarity • recorderMetrics</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Calculate activity ratio metrics — activityRatio" />
+<meta property="og:title" content="Calculate the rarity of species recorded by a volunteer — speciesRarity" />
 
-<meta property="og:description" content="This function takes in data for a recorder and calculates the activity ratio, total duration and number of active days" />
+<meta property="og:description" content="This function takes in data for a recorder and calculates the recorder's rarity metrics." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -94,19 +94,19 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate activity ratio metrics</h1>
+    <h1>Calculate the rarity of species recorded by a volunteer</h1>
     
-    <div class="hidden name"><code>activityRatio.Rd</code></div>
+    <div class="hidden name"><code>speciesRarity.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function takes in data for a recorder and calculates the activity ratio, total duration and number of active days</p>
+    <p>This function takes in data for a recorder and calculates the recorder's rarity metrics.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>activityRatio</span>(<span class='no'>recorder_name</span>, <span class='no'>data</span>, <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>"recorders"</span>,
-  <span class='kw'>date_col</span> <span class='kw'>=</span> <span class='st'>"date_start"</span>, <span class='kw'>summer_days</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>speciesRarity</span>(<span class='no'>recorder_name</span>, <span class='no'>data</span>, <span class='kw'>sp_col</span> <span class='kw'>=</span> <span class='st'>"preferred_taxon"</span>,
+  <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>"recorders"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -120,28 +120,40 @@
       <td><p>the data.frame of recording information</p></td>
     </tr>
     <tr>
+      <th>sp_col</th>
+      <td><p>the name of the column that contains the species names</p></td>
+    </tr>
+    <tr>
       <th>recorder_col</th>
       <td><p>the name of the column that contains the recorder names</p></td>
-    </tr>
-    <tr>
-      <th>date_col</th>
-      <td><p>the name of the column that contains the date. This must be formatted as a date</p></td>
-    </tr>
-    <tr>
-      <th>summer_days</th>
-      <td><p>Activity ratio is only calculated for the summmer period is this parameter is provided. This is a three column data.frame: year, Jday_start (numeric Julian day of the first day of summer), Jday_end (numeric Julian day of the last day of summer). These are returned as an attribute from <code>summerData</code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.frame with four columns</p><ul>
+    <p>A data.frame with seven columns</p><ul>
 <li><p><code>recorder</code> - The name of the recorder, as given in the recorder_name argument</p></li>
-<li><p><code>activity_ratio</code> - The proportion of days on which the volunteer was active in relation to the total days he/she remained linked to the project (i.e. <code>active_days</code> / <code>duration</code>. Duration is either the number of days elapsed from their first to last record, or if <code>summer_days</code> is provided it is the the number of days elapsed from their first to last record that fall into the summer periods)</p></li>
-<li><p><code>total_duration</code> - The total number of days the volunteer was involved in the project, calculated as the number of days from the first record they submitted to the last (inclusive)</p></li>
-<li><p><code>active_days</code> - The total number of unique dates on which observations were made</p></li>
+<li><p><code>median_rarity</code> - The median rarity of all observations made by the recorder</p></li>
+<li><p><code>median_diff_rarity</code> - The median rarity of an recorders observations subtracted from the median rarity across all observers. Negative numbers mean a recorder is recording more common species than the population of recorders as a whole. Positive numbers mean the recorder is recording more rare species than the population of recorders as a whole.</p></li>
+<li><p><code>stdev</code> - The standard deviation of the rarity ranks of a recorders observations</p></li>
+<li><p><code>n</code> - The total number of observations made by this recorder</p></li>
 </ul>
 
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function examines the rarity of the species that a
+recorder observes and compares this to the rarity of species recorded
+across all recorders. First all species are ranked by rarity across all
+observations from all recorders. These ranks are then scaled to 100 so
+that the metrics are independent of the number of species in the group.
+Each observation, in the entire dataset is then assigned a value for
+the ranked rarity of the species observed and a median is calculated.
+This median is therefore the median ranked rarity of species observed,
+where 1 is the most common species and 100 the rarest (ranks are scaled
+to 100). The median rarity for the individual recorder is calculated 
+in the same way, but using the species' rank values from the overall
+dataset.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -149,27 +161,23 @@
 <span class='co'># load example data</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>cit_sci_data</span>)
 
-<span class='co'># Get the summer period</span>
-<span class='no'>SD</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='summerData.html'>summerData</a></span>(<span class='no'>cit_sci_data</span>, <span class='kw'>date_col</span> <span class='kw'>=</span> <span class='st'>'date'</span>)
-
-<span class='no'>ar</span> <span class='kw'>&lt;-</span> <span class='fu'>activityRatio</span>(<span class='kw'>recorder_name</span> <span class='kw'>=</span> <span class='fl'>3007</span>,
-                    <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>cit_sci_data</span>,
-                    <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>'recorder'</span>,
-                    <span class='kw'>date_col</span> <span class='kw'>=</span> <span class='st'>'date'</span>,
-                    <span class='kw'>summer_days</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/attr'>attr</a></span>(<span class='no'>SD</span>, <span class='st'>'cutoffs'</span>))
+<span class='co'># Run for a single recorder</span>
+<span class='no'>SR</span> <span class='kw'>&lt;-</span> <span class='fu'>speciesRarity</span>(<span class='kw'>recorder_name</span> <span class='kw'>=</span> <span class='fl'>3007</span>,
+                   <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>cit_sci_data</span>,
+                   <span class='kw'>sp_col</span> <span class='kw'>=</span> <span class='st'>'species'</span>,
+                   <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>'recorder'</span>)
 
 <span class='co'># Run the metric for all recorders</span>
-<span class='no'>ar_all</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>lapply</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/unique'>unique</a></span>(<span class='no'>cit_sci_data</span>$<span class='no'>recorder</span>),
-                 <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='no'>activityRatio</span>,
+<span class='no'>SR_all</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>lapply</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/unique'>unique</a></span>(<span class='no'>cit_sci_data</span>$<span class='no'>recorder</span>),
+                 <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='no'>speciesRarity</span>,
                  <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>cit_sci_data</span>,
-                 <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>'recorder'</span>,
-                 <span class='kw'>date_col</span> <span class='kw'>=</span> <span class='st'>'date'</span>,
-                 <span class='kw'>summer_days</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/attr'>attr</a></span>(<span class='no'>SD</span>, <span class='st'>'cutoffs'</span>))
+                 <span class='kw'>sp_col</span> <span class='kw'>=</span> <span class='st'>'species'</span>,
+                 <span class='kw'>recorder_col</span> <span class='kw'>=</span> <span class='st'>'recorder'</span>)
 
 <span class='co'># summarise as one table</span>
-<span class='no'>ar_all_sum</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/do.call'>do.call</a></span>(<span class='no'>rbind</span>, <span class='no'>ar_all</span>)
+<span class='no'>SR_all_sum</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/do.call'>do.call</a></span>(<span class='no'>rbind</span>, <span class='no'>SR_all</span>)
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/hist'>hist</a></span>(<span class='no'>ar_all_sum</span>$<span class='no'>active_days</span>, <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>80</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/hist'>hist</a></span>(<span class='no'>SR_all_sum</span>$<span class='no'>median_diff_rarity</span>, <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>20</span>)
 <span class='co'># }</span><div class='input'>
 </div></pre>
   </div>
@@ -179,6 +187,8 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

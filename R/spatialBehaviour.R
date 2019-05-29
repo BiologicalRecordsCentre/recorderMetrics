@@ -1,6 +1,6 @@
 #' Calculate spatial metrics
 #' 
-#' This function takes in data for a recorder and calculates the spatial metrics. Note that the spatial projection of the data allows for estimates of distance in meters. Pay particular attention to the specification or the parameters \code{crs} and \code{new_crs}
+#' This function takes in data for a recorder and calculates the spatial metrics. Note that the spatial projection of the data allows for estimates of distance in meters. Pay particular attention to the specification of the parameters \code{crs} and \code{new_crs}
 #' 
 #' @param recorder_name the name of the recorder for whom you want to calculate the metrics
 #' @param data the data.frame of recording information

@@ -75,7 +75,7 @@ predictAxes <- function(data,
   
   colnames(data) <- data.names
   
-  summer_data <- summerData(data = data,
+  summer_data <- summerData(input_data = data,
                             probs = c(0.05, 0.95),
                             date_col = 'date')
 
@@ -94,81 +94,103 @@ predictAxes <- function(data,
   r = 0
   
   for(i in recorders){
-    
-    r = r + 1
-    if(length(recorders) > 1) setTxtProgressBar(progress, value = r/length(recorders))
-    
-    rec.activity <- activityRatio(data = summer_data,
-                                  recorder_name = i,
-                                  recorder_col = 'recorder',
-                                  date_col = 'date',
-                                  summer_days = attr(summer_data, 'cutoffs'))
 
+    r = r + 1
     
-    if(rec.activity$active_days >= active_days_limit){
+    # cat(recorder, recorder %in% summer_data$recorder, '\n')
+    
+    if(i %in% summer_data$recorder){
       
-      rec.weeklyDevotedDays <- weeklyDevotedDays(recorder_name = i,
-                                                 data = data,
-                                                 recorder_col = 'recorder',
-                                                 date_col = 'date')
+      if(length(recorders) > 1) setTxtProgressBar(progress, value = r/length(recorders))
       
-      rec.periodicity <- periodicity(recorder_name = i,
-                                     data = summer_data,
+      rec.activity <- activityRatio(data = summer_data,
+                                    recorder_name = i,
+                                    recorder_col = 'recorder',
+                                    date_col = 'date',
+                                    summer_days = attr(summer_data, 'cutoffs'))
+  
+      
+      if(rec.activity$active_days >= active_days_limit){
+        
+        rec.weeklyDevotedDays <- weeklyDevotedDays(recorder_name = i,
+                                                   data = data,
+                                                   recorder_col = 'recorder',
+                                                   date_col = 'date')
+        
+        rec.periodicity <- periodicity(recorder_name = i,
+                                       data = summer_data,
+                                       date_col = 'date',
+                                       recorder_col = 'recorder',
+                                       day_limit = active_days_limit)
+        
+        rec.spatial <- spatialBehaviour(data = data,
+                                        recorder_name = i,
+                                        y_col = 'lat',
+                                        x_col = 'long',
+                                        crs = crs,
+                                        new_crs = new_crs,
+                                        recorder_col = 'recorder',
+                                        threshold = active_days_limit)
+        
+        rec.taxaBreadth <- taxaBreadth(recorder_name = i,
+                                       data = data,
+                                       sp_col = 'species',
+                                       recorder_col = 'recorder')
+        
+        rec.speciesRarity <- speciesRarity(recorder_name = i,
+                                           data = data,
+                                           sp_col = 'species',
+                                           recorder_col = 'recorder')
+        
+        
+        rec.listLength <- listLength(data = data,
+                                     recorder_name = i,
+                                     threshold = active_days_limit,
+                                     plot = FALSE,
+                                     sp_col = 'species',
                                      date_col = 'date',
                                      recorder_col = 'recorder',
-                                     day_limit = active_days_limit)
-      
-      rec.spatial <- spatialBehaviour(data = data,
-                                      recorder_name = i,
-                                      y_col = 'lat',
-                                      x_col = 'long',
-                                      crs = crs,
-                                      new_crs = new_crs,
-                                      recorder_col = 'recorder',
-                                      threshold = active_days_limit)
-      
-      rec.taxaBreadth <- taxaBreadth(recorder_name = i,
-                                     data = data,
-                                     sp_col = 'species',
-                                     recorder_col = 'recorder')
-      
-      rec.speciesRarity <- speciesRarity(recorder_name = i,
-                                         data = data,
-                                         sp_col = 'species',
-                                         recorder_col = 'recorder')
-      
-      
-      rec.listLength <- listLength(data = data,
-                                   recorder_name = i,
-                                   threshold = active_days_limit,
-                                   plot = FALSE,
-                                   sp_col = 'species',
-                                   date_col = 'date',
-                                   recorder_col = 'recorder',
-                                   location_col = 'location')
-      
-      # Combine the metrics needed
-      key_variables <- data.frame(recorder = i,
-                                  activity_ratio = rec.activity$activity_ratio,
-                                  active_days = rec.activity$active_days,
-                                  median_weekly_devoted_days = rec.weeklyDevotedDays$median_weekly_devoted_days,
-                                  periodicity = rec.periodicity$periodicity,
-                                  periodicity_variation = rec.periodicity$periodicity_variation,
-                                  upper_area = rec.spatial$upper_area,
-                                  upper_n_poly = rec.spatial$upper_n_poly,
-                                  ratio = rec.spatial$ratio,
-                                  taxa_prop = rec.taxaBreadth$taxa_prop,
-                                  median_diff_rarity = rec.speciesRarity$median_diff_rarity,
-                                  p1 = rec.listLength$p1)
-      
+                                     location_col = 'location')
+        
+        # Combine the metrics needed
+        key_variables <- data.frame(recorder = i,
+                                    activity_ratio = rec.activity$activity_ratio,
+                                    active_days = rec.activity$active_days,
+                                    median_weekly_devoted_days = rec.weeklyDevotedDays$median_weekly_devoted_days,
+                                    periodicity = rec.periodicity$periodicity,
+                                    periodicity_variation = rec.periodicity$periodicity_variation,
+                                    upper_area = rec.spatial$upper_area,
+                                    upper_n_poly = rec.spatial$upper_n_poly,
+                                    ratio = rec.spatial$ratio,
+                                    taxa_prop = rec.taxaBreadth$taxa_prop,
+                                    median_diff_rarity = rec.speciesRarity$median_diff_rarity,
+                                    p1 = rec.listLength$p1)
+        
+        
+      } else {
+        
+        not_enough_data <- not_enough_data + 1
+  
+        key_variables <- data.frame(recorder = i,
+                                    activity_ratio = rec.activity$activity_ratio,
+                                    active_days = rec.activity$active_days,
+                                    median_weekly_devoted_days = NA,
+                                    periodicity = NA,
+                                    periodicity_variation = NA,
+                                    upper_area = NA,
+                                    upper_n_poly = NA,
+                                    ratio = NA,
+                                    taxa_prop = NA,
+                                    median_diff_rarity = NA,
+                                    p1 = NA)
+        
+      }
       
     } else {
       
-      not_enough_data <- not_enough_data + 1
-
       key_variables <- data.frame(recorder = i,
-                                  activity_ratio = rec.activity$activity_ratio,
-                                  active_days = rec.activity$active_days,
+                                  activity_ratio = NA,
+                                  active_days = NA,
                                   median_weekly_devoted_days = NA,
                                   periodicity = NA,
                                   periodicity_variation = NA,

@@ -49,7 +49,7 @@ A data.frame with seven columns
 }
 }
 \description{
-This function takes in data for a recorder and calculates the spatial metrics. Note that the spatial projection of the data allows for estimates of distance in meters. Pay particular attention to the specification or the parameters \code{crs} and \code{new_crs}
+This function takes in data for a recorder and calculates the spatial metrics. Note that the spatial projection of the data allows for estimates of distance in meters. Pay particular attention to the specification of the parameters \code{crs} and \code{new_crs}
 }
 \examples{
 \dontrun{

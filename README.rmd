@@ -1,0 +1,318 @@
+---
+title: "Calculating recorder Metrics using 'recorderMetrics'"
+author: "Tom August"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+# Overview
+
+This R-package is for the analysis of recorder behaviour in citizen science projects. This package takes data from citizen science projects that have 'what' (typically species), 'where', 'when', and 'who' fields. From this data the various functions in this package create metrics that quantify the behaviour of the participants (the 'who'). 
+
+This package accompanies the paper _Data-derived metrics describing the behaviour of field-based citizen scientists provide insights for project design and modelling bias_ by TA August _et al_ in press 2019
+
+```{r, eval=FALSE}
+# Install the development version of the package from Github
+devtools::install_github('biologicalrecordscentre/recorderMetrics')
+```
+```{r, echo =FALSE, results='hide', message=FALSE}
+library(knitr)
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+## Who is this for?
+
+This R package is designed for organisers of citizen science projects and academics interested in the 'citizen' element of citizen science. Specifically this package is designed for wildlife recording citizen science projects where observers are allowed to record what, where and when, they want. However, elements of the package are still useful if this is not the case. The metrics presented here allow organisers to gain new insights in the variation in recorder behaviour. The insights will help organisers to decide which citizen scientists might be interested in a new project, or what sort of project will best fit with the patterns of behaviours in the citizen scientists.
+
+## What sort of data is needed?
+
+The data needed is what, where, when, who. What was recorded (e.g. species), where was it recorded (i.e. latitude and longitude AND the grid square this falls in), when was it recorded (e.g. 20/01/1997), and who recorded it (e.g. 'John Smith' or 'USER1548785').
+
+```{r exampledata, message=FALSE}
+# We have included some example data in the r-package 
+library(recorderMetrics)
+
+head(cit_sci_data)
+
+str(cit_sci_data)
+```
+
+In the case of the example the recorder column is an anonymised number, but you could also use the users name (e.g. 'John Smith') as long as this uniquely identifies your user. If you usernames vary (e.g. 'John Smith', 'J Smith', 'John A Smith', 'JA Smith') you will need to harmonise these first. The same applies for species, numerics are used here but you could have Latin binomials as long a they uniquely identify a species. Note that location is given in latitude and longitude as well as 1km grid square. If you don't have 1km square information you could use the name of the site or a concatenation of latitude and longitude, rounded to a fewer decimal places. Either way this location should be the same for all records submitted by a recorder on an individual visit. For comparability to August _et al_ it should be a 1km square grid cell. 
+
+## Recreating the axes in August _et al_
+
+The four axes presented in _August et al_ may not be the most appropriate axes for all citizen science projects however if you wish to use them this can be done using the `predictAxes` function. This function is a wrapper for a lot of other functions that we will explore in a moment.
+
+```{r predictAxes, message=FALSE, results='hide'}
+#Run for 10 recorders
+metrics_axes <- predictAxes(data = cit_sci_data,
+                            recorders  = unique(cit_sci_data$recorder)[1:10])
+```
+```{r predictAxes2, message=FALSE, results='asis'}
+# The returned object is a table of the metrics...
+str(metrics_axes$recorder_metrics)
+
+# ...and the axes values
+kable(head(metrics_axes$axes))
+
+# Run the metric all recorders. NOTE: this takes a long time
+# metrics_axes <- predictAxes(data = cit_sci_data)
+```
+
+Note that recorder metrics are only calculated for recorders with 10 or more active days as below that the metrics cannot be estimated with confidence.
+
+## Lower level functions
+
+The function we just looked at (`predictAxes`) calculates all of the metrics as well as the axes so you can use that to quickly calculate the metrics, however that function makes use of a number of other functions which calculate the metrics. If you want to have more control over the parameters used to calculate the metrics then these functions will give you that level of control.
+
+### Summer Period
+
+`summerData`
+
+Recorder metrics can be biased if there are annual breaks in data collection. In these cases it is better to ensure that only data in the recording period (typically summer), is included. This function is an objective way to identify this recording period.
+
+```{r summerperiod, results='asis'}
+# Subset this data to summer periods only
+SD <- summerData(input_data = cit_sci_data,
+                 probs = c(0.025, 0.975),
+                 date_col = 'date')
+
+kable(head(SD))
+
+# Data not in the summer period is removed
+nrow(cit_sci_data)
+nrow(SD)
+
+# The cutoffs used to define summer are also returned
+kable(attr(SD, which = 'cutoffs'))
+```
+
+### Activity ratio
+
+`activityRatio`
+
+This function takes in data for a recorder and calculates the activity ratio, total duration and number of active days.
+
+```{r activityRatio, results='asis'}
+# Get the summer period
+SD <- summerData(cit_sci_data, date_col = 'date')
+ar <- activityRatio(recorder_name = 3007,
+                   data = cit_sci_data,
+                   recorder_col = 'recorder',
+                   date_col = 'date',
+                   summer_days = attr(SD, 'cutoffs'))
+
+# Run the metric for all recorders
+ar_all <- lapply(unique(cit_sci_data$recorder),
+                FUN = activityRatio,
+                data = cit_sci_data,
+                recorder_col = 'recorder',
+                date_col = 'date',
+                summer_days = attr(SD, 'cutoffs'))
+
+# summarise as one table
+ar_all_sum <- do.call(rbind, ar_all)
+
+kable(head(ar_all_sum))
+
+hist(ar_all_sum$active_days, breaks = 80,
+     xlab = 'Number of Active days', main = '')
+```
+
+### List length
+
+`listLength`
+
+This function takes in data for a recorder and calculates the list length metrics. These metrics are based around the idea of a 'list', defined as the species recorded at a single location (often a 1km square) on a single day by an individual recorder. 
+
+```{r listLength, results='asis'}
+# run for one recorder
+LL <- listLength(data = cit_sci_data,
+                 recorder_name = 3007,
+                 threshold = 10,
+                 plot = FALSE,
+                 sp_col = 'species',
+                 date_col = 'date',
+                 recorder_col = 'recorder',
+                 location_col = 'km_sq')
+
+# Run the metric for all recorders
+LL_all <- lapply(unique(cit_sci_data$recorder),
+                 FUN = listLength,
+                 data = cit_sci_data,
+                 threshold = 10,
+                 plot = FALSE,
+                 sp_col = 'species',
+                 date_col = 'date',
+                 recorder_col = 'recorder',
+                 location_col = 'km_sq')
+
+# summarise as one table
+LL_all_sum <- do.call(rbind, LL_all)
+
+kable(head(LL_all_sum))
+
+hist(LL_all_sum$n_lists, breaks = 80, main = '',
+     xlab = 'Number of lists recorded by an individual recorder')
+```
+
+### Periodicity
+
+`periodicity`
+
+This function takes in data for a recorder and calculates the periodicity metrics. 
+
+```{r periodicity, results='asis'}
+# run for one recorder
+P <- periodicity(recorder_name = 3007,
+                data = cit_sci_data,
+                date_col = 'date',
+                recorder_col = 'recorder',
+                day_limit = 5)
+
+# Run the metric for all recorders
+P_all <- lapply(unique(cit_sci_data$recorder),
+               FUN = periodicity,
+               data = cit_sci_data,
+               date_col = 'date',
+               recorder_col = 'recorder',
+               day_limit = 5)
+
+# summarise as one table
+P_all_sum <- do.call(rbind, P_all)
+
+kable(head(P_all_sum))
+
+hist(P_all_sum$max_streak, main = '', xlab = 'Max streak length')
+```
+
+### Spatial Behaviour
+
+`spatialBehaviour`
+
+This function takes in data for a recorder and calculates the spatial metrics. Note that the spatial projection of the data allows for estimates of distance in meters. Pay particular attention to the specification of the parameters `crs` and `new_crs`
+
+```{r spatialbehaviour, results='asis'}
+## get the proj4 strings from http://spatialreference.org
+# current form is lat long
+WGS_84 <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+
+# I want to change to UK national grid as that is in meters
+UKNG <- "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs"
+
+SB <- spatialBehaviour(recorder_name = 3007,
+                       data = cit_sci_data,
+                       crs = WGS_84,
+                       new_crs = UKNG,
+                       y_col = 'lat',
+                       x_col = 'long',
+                       recorder_col = 'recorder')
+
+# Plot the polygons that capture 95% of a recorders records
+plot(SB$poly_upper)
+
+# Run for more than one recorder, this can be slow
+SB_all <- lapply(unique(cit_sci_data$recorder)[1:10],
+                FUN = spatialBehaviour,
+                data = cit_sci_data,
+                crs = WGS_84,
+                new_crs = UKNG,
+                y_col = 'lat',
+                x_col = 'long',
+                recorder_col = 'recorder')
+
+# summarise as one table
+SB_all_sum <- do.call(rbind, SB_all)
+
+# This contains the polygons which I drop here
+# so we can see the other results in a table
+kable(head(SB_all_sum)[,c(1,6:10)])
+```
+
+
+### Species Rarity
+
+`speciesRarity`
+
+This function takes in data for a recorder and calculates the recorder's rarity metrics.
+
+```{r speciesRarity}
+# Run for a single recorder
+SR <- speciesRarity(recorder_name = 3007,
+                   data = cit_sci_data,
+                   sp_col = 'species',
+                   recorder_col = 'recorder')
+
+# Run the metric for all recorders
+SR_all <- lapply(unique(cit_sci_data$recorder),
+                 FUN = speciesRarity,
+                 data = cit_sci_data,
+                 sp_col = 'species',
+                 recorder_col = 'recorder')
+
+# summarise as one table
+SR_all_sum <- do.call(rbind, SR_all)
+
+kable(head(SR_all_sum))
+
+hist(SR_all_sum$median_diff_rarity,
+     breaks = 20, main = '',
+     xlab = 'Median Rarity Difference')
+```
+
+### Taxa Breadth
+
+`taxaBreadth`
+
+These metrics describe the 'experience' the recorder has had recording species within the group.
+
+```{r taxaBreadth, results='asis'}
+# Calculate the taxa breadth metrics for one recorder
+TB <- taxaBreadth(recorder_name = 3007,
+                  data = cit_sci_data,
+                  sp_col = 'species',
+                  recorder_col = 'recorder')
+
+# Run for more than one recorder, this can be slow 
+TB_all <- lapply(unique(cit_sci_data$recorder),
+                FUN = taxaBreadth, 
+                data = cit_sci_data, 
+                sp_col = 'species',
+                recorder_col = 'recorder')
+
+# summarise as one table
+TB_all_sum <- do.call(rbind, TB_all)
+kable(head(TB_all_sum))
+hist(TB_all_sum$taxa_prop, breaks = 40, main = '',
+     xlab = 'Proportion of Taxa Recorded')
+```
+
+## Weekly Devoted Days
+
+`weeklyDevotedDays`
+
+ These metrics describe frequency of recording in weeks in which the recorder made observations.
+
+```{r weeklyDevotedDays, results='asis'}
+# Run for one recorder
+WDD <- weeklyDevotedDays(recorder_name = 3007,
+                         data = cit_sci_data,
+                         recorder_col = 'recorder',
+                         date_col = 'date')
+
+# Run for more than one recorder, this can be slow
+WDD_all <- lapply(unique(cit_sci_data$recorder),
+                  FUN = weeklyDevotedDays,
+                  data = cit_sci_data,
+                  recorder_col = 'recorder',
+                  date_col = 'date')
+
+# summarise as one table
+WDD_all_sum <- do.call(rbind, WDD_all)
+
+kable(head(WDD_all_sum))
+
+hist(WDD_all_sum$median_weekly_devoted_days,
+     main = '',
+     xlab = 'Median Weekly Devoted days')
+```
