@@ -20,9 +20,9 @@ install.packages(c('adehabitatHR',
                    'sp',
                    'rgdal'))
 
-# Install the development version of the package from Github
 devtools::install_github('biologicalrecordscentre/recorderMetrics')
 ```
+
 ```{r, echo =FALSE, results='hide', message=FALSE, warning=FALSE}
 library(knitr)
 knitr::opts_chunk$set(cache = TRUE)
@@ -56,12 +56,12 @@ The four axes presented in _August et al_ may not be the most appropriate axes f
 metrics_axes <- predictAxes(data = cit_sci_data,
                             recorders  = unique(cit_sci_data$recorder)[1:10])
 ```
-```{r predictAxes2, message=FALSE, results='asis'}
+```{r predictAxes2, message=FALSE}
 # The returned object is a table of the metrics...
 str(metrics_axes$recorder_metrics)
 
 # ...and the axes values
-kable(head(metrics_axes$axes))
+head(metrics_axes$axes)
 
 # Run the metric all recorders. NOTE: this takes a long time
 # metrics_axes <- predictAxes(data = cit_sci_data)
@@ -79,20 +79,20 @@ The function we just looked at (`predictAxes`) calculates all of the metrics as 
 
 Recorder metrics can be biased if there are annual breaks in data collection. In these cases it is better to ensure that only data in the recording period (typically summer), is included. This function is an objective way to identify this recording period.
 
-```{r summerperiod, results='asis'}
+```{r summerperiod}
 # Subset this data to summer periods only
 SD <- summerData(input_data = cit_sci_data,
                  probs = c(0.025, 0.975),
                  date_col = 'date')
 
-kable(head(SD))
+head(SD)
 
 # Data not in the summer period is removed
 nrow(cit_sci_data)
 nrow(SD)
 
 # The cutoffs used to define summer are also returned
-kable(attr(SD, which = 'cutoffs'))
+attr(SD, which = 'cutoffs')
 ```
 
 ### Activity ratio
@@ -101,7 +101,7 @@ kable(attr(SD, which = 'cutoffs'))
 
 This function takes in data for a recorder and calculates the activity ratio, total duration and number of active days.
 
-```{r activityRatio, results='asis'}
+```{r activityRatio}
 # Get the summer period
 SD <- summerData(cit_sci_data, date_col = 'date')
 ar <- activityRatio(recorder_name = 3007,
@@ -121,7 +121,7 @@ ar_all <- lapply(unique(cit_sci_data$recorder),
 # summarise as one table
 ar_all_sum <- do.call(rbind, ar_all)
 
-kable(head(ar_all_sum))
+head(ar_all_sum)
 
 hist(ar_all_sum$active_days, breaks = 80,
      xlab = 'Number of Active days', main = '')
@@ -133,7 +133,7 @@ hist(ar_all_sum$active_days, breaks = 80,
 
 This function takes in data for a recorder and calculates the list length metrics. These metrics are based around the idea of a 'list', defined as the species recorded at a single location (often a 1km square) on a single day by an individual recorder. 
 
-```{r listLength, results='asis'}
+```{r listLength}
 # run for one recorder
 LL <- listLength(data = cit_sci_data,
                  recorder_name = 3007,
@@ -158,7 +158,7 @@ LL_all <- lapply(unique(cit_sci_data$recorder),
 # summarise as one table
 LL_all_sum <- do.call(rbind, LL_all)
 
-kable(head(LL_all_sum))
+head(LL_all_sum)
 
 hist(LL_all_sum$n_lists, breaks = 80, main = '',
      xlab = 'Number of lists recorded by an individual recorder')
@@ -170,7 +170,7 @@ hist(LL_all_sum$n_lists, breaks = 80, main = '',
 
 This function takes in data for a recorder and calculates the periodicity metrics. 
 
-```{r periodicity, results='asis'}
+```{r periodicity}
 # run for one recorder
 P <- periodicity(recorder_name = 3007,
                 data = cit_sci_data,
@@ -189,7 +189,7 @@ P_all <- lapply(unique(cit_sci_data$recorder),
 # summarise as one table
 P_all_sum <- do.call(rbind, P_all)
 
-kable(head(P_all_sum))
+head(P_all_sum)
 
 hist(P_all_sum$max_streak, main = '', xlab = 'Max streak length')
 ```
@@ -200,7 +200,7 @@ hist(P_all_sum$max_streak, main = '', xlab = 'Max streak length')
 
 This function takes in data for a recorder and calculates the spatial metrics. Note that the spatial projection of the data allows for estimates of distance in meters. Pay particular attention to the specification of the parameters `crs` and `new_crs`
 
-```{r spatialbehaviour, results='asis'}
+```{r spatialbehaviour}
 ## get the proj4 strings from http://spatialreference.org
 # current form is lat long
 WGS_84 <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
@@ -234,7 +234,7 @@ SB_all_sum <- do.call(rbind, SB_all)
 
 # This contains the polygons which I drop here
 # so we can see the other results in a table
-kable(head(SB_all_sum)[,c(1,6:10)])
+head(SB_all_sum)[,c(1,6:10)]
 ```
 
 
@@ -261,7 +261,7 @@ SR_all <- lapply(unique(cit_sci_data$recorder),
 # summarise as one table
 SR_all_sum <- do.call(rbind, SR_all)
 
-kable(head(SR_all_sum))
+head(SR_all_sum)
 
 hist(SR_all_sum$median_diff_rarity,
      breaks = 20, main = '',
@@ -274,7 +274,7 @@ hist(SR_all_sum$median_diff_rarity,
 
 These metrics describe the 'experience' the recorder has had recording species within the group.
 
-```{r taxaBreadth, results='asis'}
+```{r taxaBreadth}
 # Calculate the taxa breadth metrics for one recorder
 TB <- taxaBreadth(recorder_name = 3007,
                   data = cit_sci_data,
@@ -290,7 +290,7 @@ TB_all <- lapply(unique(cit_sci_data$recorder),
 
 # summarise as one table
 TB_all_sum <- do.call(rbind, TB_all)
-kable(head(TB_all_sum))
+head(TB_all_sum)
 hist(TB_all_sum$taxa_prop, breaks = 40, main = '',
      xlab = 'Proportion of Taxa Recorded')
 ```
@@ -301,7 +301,7 @@ hist(TB_all_sum$taxa_prop, breaks = 40, main = '',
 
  These metrics describe frequency of recording in weeks in which the recorder made observations.
 
-```{r weeklyDevotedDays, results='asis'}
+```{r weeklyDevotedDays}
 # Run for one recorder
 WDD <- weeklyDevotedDays(recorder_name = 3007,
                          data = cit_sci_data,
@@ -318,7 +318,7 @@ WDD_all <- lapply(unique(cit_sci_data$recorder),
 # summarise as one table
 WDD_all_sum <- do.call(rbind, WDD_all)
 
-kable(head(WDD_all_sum))
+head(WDD_all_sum)
 
 hist(WDD_all_sum$median_weekly_devoted_days,
      main = '',

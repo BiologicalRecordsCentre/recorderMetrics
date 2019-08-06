@@ -66,8 +66,13 @@
 <a href="#overview" class="anchor"></a>Overview</h1></div>
 <p>This R-package is for the analysis of recorder behaviour in citizen science projects. This package takes data from citizen science projects that have ‘what’ (typically species), ‘where’, ‘when’, and ‘who’ fields. From this data the various functions in this package create metrics that quantify the behaviour of the participants (the ‘who’).</p>
 <p>This package accompanies the paper <em>Data-derived metrics describing the behaviour of field-based citizen scientists provide insights for project design and modelling bias</em> by TA August <em>et al</em> in press 2019</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Install the development version of the package from Github</span>
-devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">'biologicalrecordscentre/recorderMetrics'</span>)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Install the dependencies</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'adehabitatHR'</span>,</a>
+<a class="sourceLine" id="cb1-3" title="3">                   <span class="st">'raster'</span>,</a>
+<a class="sourceLine" id="cb1-4" title="4">                   <span class="st">'sp'</span>,</a>
+<a class="sourceLine" id="cb1-5" title="5">                   <span class="st">'rgdal'</span>))</a>
+<a class="sourceLine" id="cb1-6" title="6"></a>
+<a class="sourceLine" id="cb1-7" title="7">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">'biologicalrecordscentre/recorderMetrics'</span>)</a></code></pre></div>
 <div id="who-is-this-for" class="section level2">
 <h2 class="hasAnchor">
 <a href="#who-is-this-for" class="anchor"></a>Who is this for?</h2>
@@ -76,11 +81,11 @@ devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumen
 <div id="what-sort-of-data-is-needed" class="section level2">
 <h2 class="hasAnchor">
 <a href="#what-sort-of-data-is-needed" class="anchor"></a>What sort of data is needed?</h2>
-<p>The data needed is what, where, when, who. What was recorded (e.g. species), where was it recorded (i.e. latitude and longitude AND the grid square this falls in), when was it recorded (e.g. 20/01/1997), and who recorded it (e.g. ‘John Smith’ or ‘USER1548785’).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># We have included some example data in the r-package </span>
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(recorderMetrics)
-
-<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(cit_sci_data)</code></pre></div>
+<p>The data needed is what, where, when, who. What was recorded (e.g. species), where was it recorded (i.e. latitude and longitude AND the grid square this falls in), when was it recorded (e.g. 20/01/1997), and who recorded it (e.g. ‘John Smith’ or ‘USER1548785’).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># We have included some example data in the r-package </span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(recorderMetrics)</a>
+<a class="sourceLine" id="cb2-3" title="3"></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(cit_sci_data)</a></code></pre></div>
 <pre><code>##        recorder species       date       long      lat  km_sq
 ## 82138     11652       1 2017-08-19 -2.4872953 51.31455 ST6657
 ## 150797     3007      52 2014-06-12 -2.2452737 50.62048 SY8280
@@ -88,7 +93,7 @@ devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumen
 ## 161905    22725      26 2017-04-18 -2.4787477 50.81198 ST6601
 ## 217        1417       2 2017-03-31 -1.3645562 53.51558 SE4202
 ## 134124    26865      56 2017-08-05 -0.1137257 50.90479 TQ3213</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(cit_sci_data)</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(cit_sci_data)</a></code></pre></div>
 <pre><code>## 'data.frame':    10000 obs. of  6 variables:
 ##  $ recorder: int  11652 3007 22725 22725 1417 26865 49583 31176 42818 10935 ...
 ##  $ species : num  1 52 43 26 2 56 14 45 4 62 ...
@@ -96,87 +101,53 @@ devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumen
 ##  $ long    : num  -2.49 -2.25 -1.99 -2.48 -1.36 ...
 ##  $ lat     : num  51.3 50.6 50.6 50.8 53.5 ...
 ##  $ km_sq   : chr  "ST6657" "SY8280" "SZ0083" "ST6601" ...</code></pre>
-<p>In the case of the example the recorder column is an anonymised number, but you could also use the users name (e.g. ‘John Smith’) as long as this uniquely identifies your user. If you usernames vary (e.g. ‘John Smith’, ‘J Smith’, ‘John A Smith’, ‘JA Smith’) you will need to harmonise these first. The same applies for species, numerics are used here but you could have Latin binomials as long a they uniquely identify a species. Note that location is given in latitude and longitude as well as 1km grid square. If you don’t have 1km square information you could use the name of the site or a concatenation of latitude and longitude, rounded to a fewer decimal places. Either way this location should be the same for all records submitted by a recorder on an individual visit. For comparability to August <em>et al</em> it should be a 1km square grid cell.</p>
+<p>In the case of the example the recorder column is an anonymised number, but you could also use the users name (e.g. ‘John Smith’) as long as this uniquely identifies your user. If you usernames vary (e.g. ‘John Smith’, ‘J Smith’, ‘John A Smith’, ‘JA Smith’) you will need to harmonise these first. The same applies for species, numerics are used here but you could have Latin binomials as long a they uniquely identify a species. Note that location is given in latitude and longitude as well as 1km grid square. If you don’t have 1km square information you could use the name of the site or a concatenation of latitude and longitude, rounded to a fewer decimal places. Either way this location should be the same for all records submitted by a recorder on an individual visit. For comparability to August <em>et al</em> it should be a 1km square grid cell.</p>
 </div>
 <div id="recreating-the-axes-in-august-et-al" class="section level2">
 <h2 class="hasAnchor">
 <a href="#recreating-the-axes-in-august-et-al" class="anchor"></a>Recreating the axes in August <em>et al</em>
 </h2>
 <p>The four axes presented in <em>August et al</em> may not be the most appropriate axes for all citizen science projects however if you wish to use them this can be done using the <code>predictAxes</code> function. This function is a wrapper for a lot of other functions that we will explore in a moment.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Run for 10 recorders</span>
-metrics_axes &lt;-<span class="st"> </span><span class="kw"><a href="reference/predictAxes.html">predictAxes</a></span>(<span class="dt">data =</span> cit_sci_data,
-                            <span class="dt">recorders  =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder)[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>])</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="co">#Run for 10 recorders</span></a>
+<a class="sourceLine" id="cb6-2" title="2">metrics_axes &lt;-<span class="st"> </span><span class="kw"><a href="reference/predictAxes.html">predictAxes</a></span>(<span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb6-3" title="3">                            <span class="dt">recorders  =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder)[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>])</a></code></pre></div>
 <pre><code>## Warning in predictAxes(data = cit_sci_data, recorders =
 ## unique(cit_sci_data$recorder)[1:10]): Metrics cannot be calculated
 ## for recorders with fewer than the threshold number of active days. The
 ## threshold is set to 10 and 2 recorders fail this</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The returned object is a table of the metrics...</span>
-<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(metrics_axes<span class="op">$</span>recorder_metrics)</code></pre></div>
-<p>‘data.frame’: 10 obs. of 12 variables: $ recorder : int 11652 3007 22725 1417 26865 49583 31176 42818 10935 10488 $ activity_ratio : num 1 0.107 0.256 0.209 0.207 … $ active_days : int 1 49 114 18 62 11 11 11 1 76 $ median_weekly_devoted_days: num NA 1 1 1 1 1 1 1 NA 1 $ periodicity : num NA 9 3 4 3 9 12 20 NA 5 $ periodicity_variation : num NA 9.43 4.33 3.95 8.46 … $ upper_area : num NA 3608 7961 729 1804 … $ upper_n_poly : int NA 5 13 2 4 1 1 1 NA 18 $ ratio : num NA 0.185 0.186 0.237 0.14 … $ taxa_prop : num NA 0.312 0.594 0.141 0.344 … $ median_diff_rarity : num NA -0.826 7.438 0 -1.653 … $ p1 : num NA 0.984 0.816 0.9 0.853 …</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ...and the axes values</span>
-<span class="kw">kable</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(metrics_axes<span class="op">$</span>axes))</code></pre></div>
-<table class="table table">
-<thead><tr class="header">
-<th></th>
-<th align="right">recorder</th>
-<th align="right">recording_intensity</th>
-<th align="right">spatial_extent</th>
-<th align="right">recording_potential</th>
-<th align="right">rarity_recording</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>95</td>
-<td align="right">3007</td>
-<td align="right">-0.7264398</td>
-<td align="right">1.6086909</td>
-<td align="right">-0.9654431</td>
-<td align="right">0.8602738</td>
-</tr>
-<tr class="even">
-<td>951</td>
-<td align="right">22725</td>
-<td align="right">1.1652711</td>
-<td align="right">2.9220979</td>
-<td align="right">1.6412431</td>
-<td align="right">1.7984001</td>
-</tr>
-<tr class="odd">
-<td>952</td>
-<td align="right">1417</td>
-<td align="right">0.8899649</td>
-<td align="right">-0.7295146</td>
-<td align="right">-1.6363167</td>
-<td align="right">0.7576400</td>
-</tr>
-<tr class="even">
-<td>953</td>
-<td align="right">26865</td>
-<td align="right">0.5633719</td>
-<td align="right">1.3143094</td>
-<td align="right">-0.5077554</td>
-<td align="right">0.4051430</td>
-</tr>
-<tr class="odd">
-<td>954</td>
-<td align="right">49583</td>
-<td align="right">-1.3381062</td>
-<td align="right">-2.0257823</td>
-<td align="right">-2.0829712</td>
-<td align="right">-0.1435788</td>
-</tr>
-<tr class="even">
-<td>955</td>
-<td align="right">31176</td>
-<td align="right">-2.2802431</td>
-<td align="right">-2.1251578</td>
-<td align="right">-1.1265838</td>
-<td align="right">0.8211310</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Run the metric all recorders. </span><span class="al">NOTE</span><span class="co">: this takes a long time</span>
-<span class="co"># metrics_axes &lt;- predictAxes(data = cit_sci_data)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="co"># The returned object is a table of the metrics...</span></a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(metrics_axes<span class="op">$</span>recorder_metrics)</a></code></pre></div>
+<pre><code>## 'data.frame':    10 obs. of  12 variables:
+##  $ recorder                  : int  11652 3007 22725 1417 26865 49583 31176 42818 10935 10488
+##  $ activity_ratio            : num  1 0.107 0.256 0.209 0.207 ...
+##  $ active_days               : int  1 49 114 18 62 11 11 11 1 76
+##  $ median_weekly_devoted_days: num  NA 1 1 1 1 1 1 1 NA 1
+##  $ periodicity               : num  NA 9 3 4 3 9 12 20 NA 5
+##  $ periodicity_variation     : num  NA 9.43 4.33 3.95 8.46 ...
+##  $ upper_area                : num  NA 3608 7961 729 1804 ...
+##  $ upper_n_poly              : int  NA 5 13 2 4 1 1 1 NA 18
+##  $ ratio                     : num  NA 0.185 0.186 0.237 0.14 ...
+##  $ taxa_prop                 : num  NA 0.312 0.594 0.141 0.344 ...
+##  $ median_diff_rarity        : num  NA -0.826 7.438 0 -1.653 ...
+##  $ p1                        : num  NA 0.984 0.816 0.9 0.853 ...</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="co"># ...and the axes values</span></a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(metrics_axes<span class="op">$</span>axes)</a></code></pre></div>
+<pre><code>##     recorder recording_intensity spatial_extent recording_potential
+## 95      3007          -0.7264398      1.6086909          -0.9654431
+## 951    22725           1.1652711      2.9220979           1.6412431
+## 952     1417           0.8899649     -0.7295146          -1.6363167
+## 953    26865           0.5633719      1.3143094          -0.5077554
+## 954    49583          -1.3381062     -2.0257823          -2.0829712
+## 955    31176          -2.2802431     -2.1251578          -1.1265838
+##     rarity_recording
+## 95         0.8602738
+## 951        1.7984001
+## 952        0.7576400
+## 953        0.4051430
+## 954       -0.1435788
+## 955        0.8211310</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="co"># Run the metric all recorders. </span><span class="al">NOTE</span><span class="co">: this takes a long time</span></a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="co"># metrics_axes &lt;- predictAxes(data = cit_sci_data)</span></a></code></pre></div>
 <p>Note that recorder metrics are only calculated for recorders with 10 or more active days as below that the metrics cannot be estimated with confidence.</p>
 </div>
 <div id="lower-level-functions" class="section level2">
@@ -188,217 +159,73 @@ metrics_axes &lt;-<span class="st"> </span><span class="kw"><a href="reference/p
 <a href="#summer-period" class="anchor"></a>Summer Period</h3>
 <p><code>summerData</code></p>
 <p>Recorder metrics can be biased if there are annual breaks in data collection. In these cases it is better to ensure that only data in the recording period (typically summer), is included. This function is an objective way to identify this recording period.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subset this data to summer periods only</span>
-SD &lt;-<span class="st"> </span><span class="kw"><a href="reference/summerData.html">summerData</a></span>(<span class="dt">input_data =</span> cit_sci_data,
-                 <span class="dt">probs =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>),
-                 <span class="dt">date_col =</span> <span class="st">'date'</span>)
-
-<span class="kw">kable</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(SD))</code></pre></div>
-<table class="table table">
-<thead><tr class="header">
-<th></th>
-<th align="right">recorder</th>
-<th align="right">species</th>
-<th align="left">date</th>
-<th align="right">long</th>
-<th align="right">lat</th>
-<th align="left">km_sq</th>
-<th align="right">Jday</th>
-<th align="right">year</th>
-<th align="left">summer</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>82138</td>
-<td align="right">11652</td>
-<td align="right">1</td>
-<td align="left">2017-08-19</td>
-<td align="right">-2.4872953</td>
-<td align="right">51.31455</td>
-<td align="left">ST6657</td>
-<td align="right">230</td>
-<td align="right">2017</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td>150797</td>
-<td align="right">3007</td>
-<td align="right">52</td>
-<td align="left">2014-06-12</td>
-<td align="right">-2.2452737</td>
-<td align="right">50.62048</td>
-<td align="left">SY8280</td>
-<td align="right">162</td>
-<td align="right">2014</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td>80713</td>
-<td align="right">22725</td>
-<td align="right">43</td>
-<td align="left">2015-07-05</td>
-<td align="right">-1.9939669</td>
-<td align="right">50.64902</td>
-<td align="left">SZ0083</td>
-<td align="right">185</td>
-<td align="right">2015</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td>161905</td>
-<td align="right">22725</td>
-<td align="right">26</td>
-<td align="left">2017-04-18</td>
-<td align="right">-2.4787477</td>
-<td align="right">50.81198</td>
-<td align="left">ST6601</td>
-<td align="right">107</td>
-<td align="right">2017</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td>217</td>
-<td align="right">1417</td>
-<td align="right">2</td>
-<td align="left">2017-03-31</td>
-<td align="right">-1.3645562</td>
-<td align="right">53.51558</td>
-<td align="left">SE4202</td>
-<td align="right">89</td>
-<td align="right">2017</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td>134124</td>
-<td align="right">26865</td>
-<td align="right">56</td>
-<td align="left">2017-08-05</td>
-<td align="right">-0.1137257</td>
-<td align="right">50.90479</td>
-<td align="left">TQ3213</td>
-<td align="right">216</td>
-<td align="right">2017</td>
-<td align="left">TRUE</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Data not in the summer period is removed</span>
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(cit_sci_data)</code></pre></div>
-<p>[1] 10000</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(SD)</code></pre></div>
-<p>[1] 9536</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The cutoffs used to define summer are also returned</span>
-<span class="kw">kable</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(SD, <span class="dt">which =</span> <span class="st">'cutoffs'</span>))</code></pre></div>
-<table class="table table">
-<thead><tr class="header">
-<th align="right">year</th>
-<th align="right">quantile_first</th>
-<th align="right">quantile_last</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="right">2014</td>
-<td align="right">102</td>
-<td align="right">275.000</td>
-</tr>
-<tr class="even">
-<td align="right">2015</td>
-<td align="right">94</td>
-<td align="right">273.000</td>
-</tr>
-<tr class="odd">
-<td align="right">2016</td>
-<td align="right">92</td>
-<td align="right">278.000</td>
-</tr>
-<tr class="even">
-<td align="right">2017</td>
-<td align="right">83</td>
-<td align="right">241.325</td>
-</tr>
-</tbody>
-</table>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="co"># Subset this data to summer periods only</span></a>
+<a class="sourceLine" id="cb13-2" title="2">SD &lt;-<span class="st"> </span><span class="kw"><a href="reference/summerData.html">summerData</a></span>(<span class="dt">input_data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb13-3" title="3">                 <span class="dt">probs =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>),</a>
+<a class="sourceLine" id="cb13-4" title="4">                 <span class="dt">date_col =</span> <span class="st">'date'</span>)</a>
+<a class="sourceLine" id="cb13-5" title="5"></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(SD)</a></code></pre></div>
+<pre><code>##        recorder species       date       long      lat  km_sq Jday year
+## 82138     11652       1 2017-08-19 -2.4872953 51.31455 ST6657  230 2017
+## 150797     3007      52 2014-06-12 -2.2452737 50.62048 SY8280  162 2014
+## 80713     22725      43 2015-07-05 -1.9939669 50.64902 SZ0083  185 2015
+## 161905    22725      26 2017-04-18 -2.4787477 50.81198 ST6601  107 2017
+## 217        1417       2 2017-03-31 -1.3645562 53.51558 SE4202   89 2017
+## 134124    26865      56 2017-08-05 -0.1137257 50.90479 TQ3213  216 2017
+##        summer
+## 82138    TRUE
+## 150797   TRUE
+## 80713    TRUE
+## 161905   TRUE
+## 217      TRUE
+## 134124   TRUE</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="co"># Data not in the summer period is removed</span></a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(cit_sci_data)</a></code></pre></div>
+<pre><code>## [1] 10000</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(SD)</a></code></pre></div>
+<pre><code>## [1] 9536</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="co"># The cutoffs used to define summer are also returned</span></a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(SD, <span class="dt">which =</span> <span class="st">'cutoffs'</span>)</a></code></pre></div>
+<pre><code>##   year quantile_first quantile_last
+## 1 2014            102       275.000
+## 2 2015             94       273.000
+## 3 2016             92       278.000
+## 4 2017             83       241.325</code></pre>
 </div>
 <div id="activity-ratio" class="section level3">
 <h3 class="hasAnchor">
 <a href="#activity-ratio" class="anchor"></a>Activity ratio</h3>
 <p><code>activityRatio</code></p>
 <p>This function takes in data for a recorder and calculates the activity ratio, total duration and number of active days.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Get the summer period</span>
-SD &lt;-<span class="st"> </span><span class="kw"><a href="reference/summerData.html">summerData</a></span>(cit_sci_data, <span class="dt">date_col =</span> <span class="st">'date'</span>)
-ar &lt;-<span class="st"> </span><span class="kw"><a href="reference/activityRatio.html">activityRatio</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,
-                   <span class="dt">data =</span> cit_sci_data,
-                   <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,
-                   <span class="dt">date_col =</span> <span class="st">'date'</span>,
-                   <span class="dt">summer_days =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(SD, <span class="st">'cutoffs'</span>))
-
-<span class="co"># Run the metric for all recorders</span>
-ar_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),
-                <span class="dt">FUN =</span> activityRatio,
-                <span class="dt">data =</span> cit_sci_data,
-                <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,
-                <span class="dt">date_col =</span> <span class="st">'date'</span>,
-                <span class="dt">summer_days =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(SD, <span class="st">'cutoffs'</span>))
-
-<span class="co"># summarise as one table</span>
-ar_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, ar_all)
-
-<span class="kw">kable</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(ar_all_sum))</code></pre></div>
-<table class="table table">
-<thead><tr class="header">
-<th align="right">recorder</th>
-<th align="right">activity_ratio</th>
-<th align="right">total_duration</th>
-<th align="right">summer_duration</th>
-<th align="right">active_days</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="right">11652</td>
-<td align="right">1.0000000</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="right">3007</td>
-<td align="right">0.0804598</td>
-<td align="right">1236</td>
-<td align="right">696</td>
-<td align="right">56</td>
-</tr>
-<tr class="odd">
-<td align="right">22725</td>
-<td align="right">0.1840943</td>
-<td align="right">1223</td>
-<td align="right">679</td>
-<td align="right">125</td>
-</tr>
-<tr class="even">
-<td align="right">1417</td>
-<td align="right">0.1583333</td>
-<td align="right">120</td>
-<td align="right">120</td>
-<td align="right">19</td>
-</tr>
-<tr class="odd">
-<td align="right">26865</td>
-<td align="right">0.1333333</td>
-<td align="right">867</td>
-<td align="right">510</td>
-<td align="right">68</td>
-</tr>
-<tr class="even">
-<td align="right">49583</td>
-<td align="right">0.0604396</td>
-<td align="right">352</td>
-<td align="right">182</td>
-<td align="right">11</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(ar_all_sum<span class="op">$</span>active_days, <span class="dt">breaks =</span> <span class="dv">80</span>,
-     <span class="dt">xlab =</span> <span class="st">'Number of Active days'</span>, <span class="dt">main =</span> <span class="st">''</span>)</code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="co"># Get the summer period</span></a>
+<a class="sourceLine" id="cb21-2" title="2">SD &lt;-<span class="st"> </span><span class="kw"><a href="reference/summerData.html">summerData</a></span>(cit_sci_data, <span class="dt">date_col =</span> <span class="st">'date'</span>)</a>
+<a class="sourceLine" id="cb21-3" title="3">ar &lt;-<span class="st"> </span><span class="kw"><a href="reference/activityRatio.html">activityRatio</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,</a>
+<a class="sourceLine" id="cb21-4" title="4">                   <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb21-5" title="5">                   <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,</a>
+<a class="sourceLine" id="cb21-6" title="6">                   <span class="dt">date_col =</span> <span class="st">'date'</span>,</a>
+<a class="sourceLine" id="cb21-7" title="7">                   <span class="dt">summer_days =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(SD, <span class="st">'cutoffs'</span>))</a>
+<a class="sourceLine" id="cb21-8" title="8"></a>
+<a class="sourceLine" id="cb21-9" title="9"><span class="co"># Run the metric for all recorders</span></a>
+<a class="sourceLine" id="cb21-10" title="10">ar_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),</a>
+<a class="sourceLine" id="cb21-11" title="11">                <span class="dt">FUN =</span> activityRatio,</a>
+<a class="sourceLine" id="cb21-12" title="12">                <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb21-13" title="13">                <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,</a>
+<a class="sourceLine" id="cb21-14" title="14">                <span class="dt">date_col =</span> <span class="st">'date'</span>,</a>
+<a class="sourceLine" id="cb21-15" title="15">                <span class="dt">summer_days =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(SD, <span class="st">'cutoffs'</span>))</a>
+<a class="sourceLine" id="cb21-16" title="16"></a>
+<a class="sourceLine" id="cb21-17" title="17"><span class="co"># summarise as one table</span></a>
+<a class="sourceLine" id="cb21-18" title="18">ar_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, ar_all)</a>
+<a class="sourceLine" id="cb21-19" title="19"></a>
+<a class="sourceLine" id="cb21-20" title="20"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(ar_all_sum)</a></code></pre></div>
+<pre><code>##   recorder activity_ratio total_duration summer_duration active_days
+## 1    11652     1.00000000              1               1           1
+## 2     3007     0.08045977           1236             696          56
+## 3    22725     0.18409426           1223             679         125
+## 4     1417     0.15833333            120             120          19
+## 5    26865     0.13333333            867             510          68
+## 6    49583     0.06043956            352             182          11</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(ar_all_sum<span class="op">$</span>active_days, <span class="dt">breaks =</span> <span class="dv">80</span>,</a>
+<a class="sourceLine" id="cb23-2" title="2">     <span class="dt">xlab =</span> <span class="st">'Number of Active days'</span>, <span class="dt">main =</span> <span class="st">''</span>)</a></code></pre></div>
 <p><img src="index_files/figure-html/activityRatio-1.png" width="700"></p>
 </div>
 <div id="list-length" class="section level3">
@@ -406,100 +233,40 @@ ar_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.r
 <a href="#list-length" class="anchor"></a>List length</h3>
 <p><code>listLength</code></p>
 <p>This function takes in data for a recorder and calculates the list length metrics. These metrics are based around the idea of a ‘list’, defined as the species recorded at a single location (often a 1km square) on a single day by an individual recorder.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># run for one recorder</span>
-LL &lt;-<span class="st"> </span><span class="kw"><a href="reference/listLength.html">listLength</a></span>(<span class="dt">data =</span> cit_sci_data,
-                 <span class="dt">recorder_name =</span> <span class="dv">3007</span>,
-                 <span class="dt">threshold =</span> <span class="dv">10</span>,
-                 <span class="dt">plot =</span> <span class="ot">FALSE</span>,
-                 <span class="dt">sp_col =</span> <span class="st">'species'</span>,
-                 <span class="dt">date_col =</span> <span class="st">'date'</span>,
-                 <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,
-                 <span class="dt">location_col =</span> <span class="st">'km_sq'</span>)
-
-<span class="co"># Run the metric for all recorders</span>
-LL_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),
-                 <span class="dt">FUN =</span> listLength,
-                 <span class="dt">data =</span> cit_sci_data,
-                 <span class="dt">threshold =</span> <span class="dv">10</span>,
-                 <span class="dt">plot =</span> <span class="ot">FALSE</span>,
-                 <span class="dt">sp_col =</span> <span class="st">'species'</span>,
-                 <span class="dt">date_col =</span> <span class="st">'date'</span>,
-                 <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,
-                 <span class="dt">location_col =</span> <span class="st">'km_sq'</span>)
-
-<span class="co"># summarise as one table</span>
-LL_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, LL_all)
-
-<span class="kw">kable</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(LL_all_sum))</code></pre></div>
-<table class="table table">
-<thead><tr class="header">
-<th align="right">recorder</th>
-<th align="right">mean_LL</th>
-<th align="right">median_LL</th>
-<th align="right">variance</th>
-<th align="right">p1</th>
-<th align="right">p4</th>
-<th align="right">n_lists</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="right">11652</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="right">3007</td>
-<td align="right">1.015873</td>
-<td align="right">1</td>
-<td align="right">0.0158730</td>
-<td align="right">0.9841270</td>
-<td align="right">0.0000000</td>
-<td align="right">63</td>
-</tr>
-<tr class="odd">
-<td align="right">22725</td>
-<td align="right">1.226994</td>
-<td align="right">1</td>
-<td align="right">0.2876619</td>
-<td align="right">0.8159509</td>
-<td align="right">0.0122699</td>
-<td align="right">163</td>
-</tr>
-<tr class="even">
-<td align="right">1417</td>
-<td align="right">1.100000</td>
-<td align="right">1</td>
-<td align="right">0.0947368</td>
-<td align="right">0.9000000</td>
-<td align="right">0.0000000</td>
-<td align="right">20</td>
-</tr>
-<tr class="odd">
-<td align="right">26865</td>
-<td align="right">1.186667</td>
-<td align="right">1</td>
-<td align="right">0.2619820</td>
-<td align="right">0.8533333</td>
-<td align="right">0.0133333</td>
-<td align="right">75</td>
-</tr>
-<tr class="even">
-<td align="right">49583</td>
-<td align="right">1.090909</td>
-<td align="right">1</td>
-<td align="right">0.0909091</td>
-<td align="right">0.9090909</td>
-<td align="right">0.0000000</td>
-<td align="right">11</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(LL_all_sum<span class="op">$</span>n_lists, <span class="dt">breaks =</span> <span class="dv">80</span>, <span class="dt">main =</span> <span class="st">''</span>,
-     <span class="dt">xlab =</span> <span class="st">'Number of lists recorded by an individual recorder'</span>)</code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1"><span class="co"># run for one recorder</span></a>
+<a class="sourceLine" id="cb24-2" title="2">LL &lt;-<span class="st"> </span><span class="kw"><a href="reference/listLength.html">listLength</a></span>(<span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb24-3" title="3">                 <span class="dt">recorder_name =</span> <span class="dv">3007</span>,</a>
+<a class="sourceLine" id="cb24-4" title="4">                 <span class="dt">threshold =</span> <span class="dv">10</span>,</a>
+<a class="sourceLine" id="cb24-5" title="5">                 <span class="dt">plot =</span> <span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb24-6" title="6">                 <span class="dt">sp_col =</span> <span class="st">'species'</span>,</a>
+<a class="sourceLine" id="cb24-7" title="7">                 <span class="dt">date_col =</span> <span class="st">'date'</span>,</a>
+<a class="sourceLine" id="cb24-8" title="8">                 <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,</a>
+<a class="sourceLine" id="cb24-9" title="9">                 <span class="dt">location_col =</span> <span class="st">'km_sq'</span>)</a>
+<a class="sourceLine" id="cb24-10" title="10"></a>
+<a class="sourceLine" id="cb24-11" title="11"><span class="co"># Run the metric for all recorders</span></a>
+<a class="sourceLine" id="cb24-12" title="12">LL_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),</a>
+<a class="sourceLine" id="cb24-13" title="13">                 <span class="dt">FUN =</span> listLength,</a>
+<a class="sourceLine" id="cb24-14" title="14">                 <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb24-15" title="15">                 <span class="dt">threshold =</span> <span class="dv">10</span>,</a>
+<a class="sourceLine" id="cb24-16" title="16">                 <span class="dt">plot =</span> <span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb24-17" title="17">                 <span class="dt">sp_col =</span> <span class="st">'species'</span>,</a>
+<a class="sourceLine" id="cb24-18" title="18">                 <span class="dt">date_col =</span> <span class="st">'date'</span>,</a>
+<a class="sourceLine" id="cb24-19" title="19">                 <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,</a>
+<a class="sourceLine" id="cb24-20" title="20">                 <span class="dt">location_col =</span> <span class="st">'km_sq'</span>)</a>
+<a class="sourceLine" id="cb24-21" title="21"></a>
+<a class="sourceLine" id="cb24-22" title="22"><span class="co"># summarise as one table</span></a>
+<a class="sourceLine" id="cb24-23" title="23">LL_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, LL_all)</a>
+<a class="sourceLine" id="cb24-24" title="24"></a>
+<a class="sourceLine" id="cb24-25" title="25"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(LL_all_sum)</a></code></pre></div>
+<pre><code>##   recorder  mean_LL median_LL   variance        p1         p4 n_lists
+## 1    11652       NA        NA         NA        NA         NA       1
+## 2     3007 1.015873         1 0.01587302 0.9841270 0.00000000      63
+## 3    22725 1.226994         1 0.28766190 0.8159509 0.01226994     163
+## 4     1417 1.100000         1 0.09473684 0.9000000 0.00000000      20
+## 5    26865 1.186667         1 0.26198198 0.8533333 0.01333333      75
+## 6    49583 1.090909         1 0.09090909 0.9090909 0.00000000      11</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(LL_all_sum<span class="op">$</span>n_lists, <span class="dt">breaks =</span> <span class="dv">80</span>, <span class="dt">main =</span> <span class="st">''</span>,</a>
+<a class="sourceLine" id="cb26-2" title="2">     <span class="dt">xlab =</span> <span class="st">'Number of lists recorded by an individual recorder'</span>)</a></code></pre></div>
 <p><img src="index_files/figure-html/listLength-1.png" width="700"></p>
 </div>
 <div id="periodicity" class="section level3">
@@ -507,93 +274,40 @@ LL_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.r
 <a href="#periodicity" class="anchor"></a>Periodicity</h3>
 <p><code>periodicity</code></p>
 <p>This function takes in data for a recorder and calculates the periodicity metrics.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># run for one recorder</span>
-P &lt;-<span class="st"> </span><span class="kw"><a href="reference/periodicity.html">periodicity</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,
-                <span class="dt">data =</span> cit_sci_data,
-                <span class="dt">date_col =</span> <span class="st">'date'</span>,
-                <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,
-                <span class="dt">day_limit =</span> <span class="dv">5</span>)
-
-<span class="co"># Run the metric for all recorders</span>
-P_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),
-               <span class="dt">FUN =</span> periodicity,
-               <span class="dt">data =</span> cit_sci_data,
-               <span class="dt">date_col =</span> <span class="st">'date'</span>,
-               <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,
-               <span class="dt">day_limit =</span> <span class="dv">5</span>)
-
-<span class="co"># summarise as one table</span>
-P_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, P_all)
-
-<span class="kw">kable</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(P_all_sum))</code></pre></div>
-<table class="table table">
-<thead><tr class="header">
-<th align="right">recorder</th>
-<th align="right">periodicity</th>
-<th align="right">periodicity_variation</th>
-<th align="right">median_streak</th>
-<th align="right">sd_streak</th>
-<th align="right">max_streak</th>
-<th align="right">n_days</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="right">11652</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="right">3007</td>
-<td align="right">9.0</td>
-<td align="right">10.424964</td>
-<td align="right">1</td>
-<td align="right">0.2800560</td>
-<td align="right">3</td>
-<td align="right">56</td>
-</tr>
-<tr class="odd">
-<td align="right">22725</td>
-<td align="right">4.0</td>
-<td align="right">9.935425</td>
-<td align="right">1</td>
-<td align="right">0.6032567</td>
-<td align="right">5</td>
-<td align="right">125</td>
-</tr>
-<tr class="even">
-<td align="right">1417</td>
-<td align="right">4.5</td>
-<td align="right">7.837608</td>
-<td align="right">1</td>
-<td align="right">0.5622957</td>
-<td align="right">3</td>
-<td align="right">19</td>
-</tr>
-<tr class="odd">
-<td align="right">26865</td>
-<td align="right">4.0</td>
-<td align="right">12.050814</td>
-<td align="right">1</td>
-<td align="right">0.8372419</td>
-<td align="right">4</td>
-<td align="right">68</td>
-</tr>
-<tr class="even">
-<td align="right">49583</td>
-<td align="right">9.0</td>
-<td align="right">19.504985</td>
-<td align="right">1</td>
-<td align="right">0.5000000</td>
-<td align="right">2</td>
-<td align="right">11</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(P_all_sum<span class="op">$</span>max_streak, <span class="dt">main =</span> <span class="st">''</span>, <span class="dt">xlab =</span> <span class="st">'Max streak length'</span>)</code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1"><span class="co"># run for one recorder</span></a>
+<a class="sourceLine" id="cb27-2" title="2">P &lt;-<span class="st"> </span><span class="kw"><a href="reference/periodicity.html">periodicity</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,</a>
+<a class="sourceLine" id="cb27-3" title="3">                <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb27-4" title="4">                <span class="dt">date_col =</span> <span class="st">'date'</span>,</a>
+<a class="sourceLine" id="cb27-5" title="5">                <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,</a>
+<a class="sourceLine" id="cb27-6" title="6">                <span class="dt">day_limit =</span> <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb27-7" title="7"></a>
+<a class="sourceLine" id="cb27-8" title="8"><span class="co"># Run the metric for all recorders</span></a>
+<a class="sourceLine" id="cb27-9" title="9">P_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),</a>
+<a class="sourceLine" id="cb27-10" title="10">               <span class="dt">FUN =</span> periodicity,</a>
+<a class="sourceLine" id="cb27-11" title="11">               <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb27-12" title="12">               <span class="dt">date_col =</span> <span class="st">'date'</span>,</a>
+<a class="sourceLine" id="cb27-13" title="13">               <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,</a>
+<a class="sourceLine" id="cb27-14" title="14">               <span class="dt">day_limit =</span> <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb27-15" title="15"></a>
+<a class="sourceLine" id="cb27-16" title="16"><span class="co"># summarise as one table</span></a>
+<a class="sourceLine" id="cb27-17" title="17">P_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, P_all)</a>
+<a class="sourceLine" id="cb27-18" title="18"></a>
+<a class="sourceLine" id="cb27-19" title="19"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(P_all_sum)</a></code></pre></div>
+<pre><code>##   recorder periodicity periodicity_variation median_streak sd_streak
+## 1    11652          NA                    NA            NA        NA
+## 2     3007         9.0             10.424964             1 0.2800560
+## 3    22725         4.0              9.935425             1 0.6032567
+## 4     1417         4.5              7.837608             1 0.5622957
+## 5    26865         4.0             12.050814             1 0.8372419
+## 6    49583         9.0             19.504985             1 0.5000000
+##   max_streak n_days
+## 1         NA      1
+## 2          3     56
+## 3          5    125
+## 4          3     19
+## 5          4     68
+## 6          2     11</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(P_all_sum<span class="op">$</span>max_streak, <span class="dt">main =</span> <span class="st">''</span>, <span class="dt">xlab =</span> <span class="st">'Max streak length'</span>)</a></code></pre></div>
 <p><img src="index_files/figure-html/periodicity-1.png" width="700"></p>
 </div>
 <div id="spatial-behaviour" class="section level3">
@@ -601,179 +315,80 @@ P_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rd
 <a href="#spatial-behaviour" class="anchor"></a>Spatial Behaviour</h3>
 <p><code>spatialBehaviour</code></p>
 <p>This function takes in data for a recorder and calculates the spatial metrics. Note that the spatial projection of the data allows for estimates of distance in meters. Pay particular attention to the specification of the parameters <code>crs</code> and <code>new_crs</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## get the proj4 strings from http://spatialreference.org
-<span class="co"># current form is lat long</span>
-WGS_<span class="dv">84</span> &lt;-<span class="st"> "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"</span>
-
-<span class="co"># I want to change to UK national grid as that is in meters</span>
-UKNG &lt;-<span class="st"> "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs"</span>
-
-SB &lt;-<span class="st"> </span><span class="kw"><a href="reference/spatialBehaviour.html">spatialBehaviour</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,
-                       <span class="dt">data =</span> cit_sci_data,
-                       <span class="dt">crs =</span> WGS_<span class="dv">84</span>,
-                       <span class="dt">new_crs =</span> UKNG,
-                       <span class="dt">y_col =</span> <span class="st">'lat'</span>,
-                       <span class="dt">x_col =</span> <span class="st">'long'</span>,
-                       <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)
-
-<span class="co"># Plot the polygons that capture 95% of a recorders records</span>
-<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(SB<span class="op">$</span>poly_upper)</code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1"><span class="co">## get the proj4 strings from http://spatialreference.org</span></a>
+<a class="sourceLine" id="cb30-2" title="2"><span class="co"># current form is lat long</span></a>
+<a class="sourceLine" id="cb30-3" title="3">WGS_<span class="dv">84</span> &lt;-<span class="st"> "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"</span></a>
+<a class="sourceLine" id="cb30-4" title="4"></a>
+<a class="sourceLine" id="cb30-5" title="5"><span class="co"># I want to change to UK national grid as that is in meters</span></a>
+<a class="sourceLine" id="cb30-6" title="6">UKNG &lt;-<span class="st"> "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs"</span></a>
+<a class="sourceLine" id="cb30-7" title="7"></a>
+<a class="sourceLine" id="cb30-8" title="8">SB &lt;-<span class="st"> </span><span class="kw"><a href="reference/spatialBehaviour.html">spatialBehaviour</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,</a>
+<a class="sourceLine" id="cb30-9" title="9">                       <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb30-10" title="10">                       <span class="dt">crs =</span> WGS_<span class="dv">84</span>,</a>
+<a class="sourceLine" id="cb30-11" title="11">                       <span class="dt">new_crs =</span> UKNG,</a>
+<a class="sourceLine" id="cb30-12" title="12">                       <span class="dt">y_col =</span> <span class="st">'lat'</span>,</a>
+<a class="sourceLine" id="cb30-13" title="13">                       <span class="dt">x_col =</span> <span class="st">'long'</span>,</a>
+<a class="sourceLine" id="cb30-14" title="14">                       <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)</a>
+<a class="sourceLine" id="cb30-15" title="15"></a>
+<a class="sourceLine" id="cb30-16" title="16"><span class="co"># Plot the polygons that capture 95% of a recorders records</span></a>
+<a class="sourceLine" id="cb30-17" title="17"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(SB<span class="op">$</span>poly_upper)</a></code></pre></div>
 <p><img src="index_files/figure-html/spatialbehaviour-1.png" width="700"></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Run for more than one recorder, this can be slow</span>
-SB_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder)[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>],
-                <span class="dt">FUN =</span> spatialBehaviour,
-                <span class="dt">data =</span> cit_sci_data,
-                <span class="dt">crs =</span> WGS_<span class="dv">84</span>,
-                <span class="dt">new_crs =</span> UKNG,
-                <span class="dt">y_col =</span> <span class="st">'lat'</span>,
-                <span class="dt">x_col =</span> <span class="st">'long'</span>,
-                <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)
-
-<span class="co"># summarise as one table</span>
-SB_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, SB_all)
-
-<span class="co"># This contains the polygons which I drop here</span>
-<span class="co"># so we can see the other results in a table</span>
-<span class="kw">kable</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(SB_all_sum)[,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="dv">6</span><span class="op">:</span><span class="dv">10</span>)])</code></pre></div>
-<table class="table table">
-<thead><tr class="header">
-<th align="left">recorder</th>
-<th align="left">lower_n_poly</th>
-<th align="left">upper_area</th>
-<th align="left">lower_area</th>
-<th align="left">ratio</th>
-<th align="left">n</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">11652</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">1</td>
-</tr>
-<tr class="even">
-<td align="left">3007</td>
-<td align="left">1</td>
-<td align="left">c(<code>95</code> = 3608)</td>
-<td align="left">c(<code>60</code> = 668)</td>
-<td align="left">c(<code>60</code> = 0.185144124168514)</td>
-<td align="left">64</td>
-</tr>
-<tr class="odd">
-<td align="left">22725</td>
-<td align="left">1</td>
-<td align="left">c(<code>95</code> = 7961)</td>
-<td align="left">c(<code>60</code> = 1477)</td>
-<td align="left">c(<code>60</code> = 0.18552945609848)</td>
-<td align="left">200</td>
-</tr>
-<tr class="even">
-<td align="left">1417</td>
-<td align="left">1</td>
-<td align="left">c(<code>95</code> = 729)</td>
-<td align="left">c(<code>60</code> = 173)</td>
-<td align="left">c(<code>60</code> = 0.237311385459534)</td>
-<td align="left">22</td>
-</tr>
-<tr class="odd">
-<td align="left">26865</td>
-<td align="left">1</td>
-<td align="left">c(<code>95</code> = 1804)</td>
-<td align="left">c(<code>60</code> = 252)</td>
-<td align="left">c(<code>60</code> = 0.139689578713969)</td>
-<td align="left">89</td>
-</tr>
-<tr class="even">
-<td align="left">49583</td>
-<td align="left">1</td>
-<td align="left">c(<code>95</code> = 521)</td>
-<td align="left">c(<code>60</code> = 155)</td>
-<td align="left">c(<code>60</code> = 0.297504798464491)</td>
-<td align="left">12</td>
-</tr>
-</tbody>
-</table>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1"><span class="co"># Run for more than one recorder, this can be slow</span></a>
+<a class="sourceLine" id="cb31-2" title="2">SB_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder)[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>],</a>
+<a class="sourceLine" id="cb31-3" title="3">                <span class="dt">FUN =</span> spatialBehaviour,</a>
+<a class="sourceLine" id="cb31-4" title="4">                <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb31-5" title="5">                <span class="dt">crs =</span> WGS_<span class="dv">84</span>,</a>
+<a class="sourceLine" id="cb31-6" title="6">                <span class="dt">new_crs =</span> UKNG,</a>
+<a class="sourceLine" id="cb31-7" title="7">                <span class="dt">y_col =</span> <span class="st">'lat'</span>,</a>
+<a class="sourceLine" id="cb31-8" title="8">                <span class="dt">x_col =</span> <span class="st">'long'</span>,</a>
+<a class="sourceLine" id="cb31-9" title="9">                <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)</a>
+<a class="sourceLine" id="cb31-10" title="10"></a>
+<a class="sourceLine" id="cb31-11" title="11"><span class="co"># summarise as one table</span></a>
+<a class="sourceLine" id="cb31-12" title="12">SB_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, SB_all)</a>
+<a class="sourceLine" id="cb31-13" title="13"></a>
+<a class="sourceLine" id="cb31-14" title="14"><span class="co"># This contains the polygons which I drop here</span></a>
+<a class="sourceLine" id="cb31-15" title="15"><span class="co"># so we can see the other results in a table</span></a>
+<a class="sourceLine" id="cb31-16" title="16"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(SB_all_sum)[,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="dv">6</span><span class="op">:</span><span class="dv">10</span>)]</a></code></pre></div>
+<pre><code>##      recorder lower_n_poly upper_area lower_area ratio     n  
+## [1,] 11652    NA           NA         NA         NA        1  
+## [2,] 3007     1            3608       668        0.1851441 64 
+## [3,] 22725    1            7961       1477       0.1855295 200
+## [4,] 1417     1            729        173        0.2373114 22 
+## [5,] 26865    1            1804       252        0.1396896 89 
+## [6,] 49583    1            521        155        0.2975048 12</code></pre>
 </div>
 <div id="species-rarity" class="section level3">
 <h3 class="hasAnchor">
 <a href="#species-rarity" class="anchor"></a>Species Rarity</h3>
 <p><code>speciesRarity</code></p>
 <p>This function takes in data for a recorder and calculates the recorder’s rarity metrics.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Run for a single recorder</span>
-SR &lt;-<span class="st"> </span><span class="kw"><a href="reference/speciesRarity.html">speciesRarity</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,
-                   <span class="dt">data =</span> cit_sci_data,
-                   <span class="dt">sp_col =</span> <span class="st">'species'</span>,
-                   <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)
-
-<span class="co"># Run the metric for all recorders</span>
-SR_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),
-                 <span class="dt">FUN =</span> speciesRarity,
-                 <span class="dt">data =</span> cit_sci_data,
-                 <span class="dt">sp_col =</span> <span class="st">'species'</span>,
-                 <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)
-
-<span class="co"># summarise as one table</span>
-SR_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, SR_all)
-
-<span class="kw">kable</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(SR_all_sum))</code></pre></div>
-<table class="table table">
-<thead><tr class="header">
-<th align="left">recorder</th>
-<th align="right">median_rarity</th>
-<th align="right">median_diff_rarity</th>
-<th align="right">stdev</th>
-<th align="right">n</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">11652</td>
-<td align="right">4.958678</td>
-<td align="right">-8.2644628</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3007</td>
-<td align="right">12.396694</td>
-<td align="right">-0.8264463</td>
-<td align="right">12.832748</td>
-<td align="right">64</td>
-</tr>
-<tr class="odd">
-<td align="left">22725</td>
-<td align="right">20.661157</td>
-<td align="right">7.4380165</td>
-<td align="right">16.231958</td>
-<td align="right">200</td>
-</tr>
-<tr class="even">
-<td align="left">1417</td>
-<td align="right">13.223140</td>
-<td align="right">0.0000000</td>
-<td align="right">9.988949</td>
-<td align="right">22</td>
-</tr>
-<tr class="odd">
-<td align="left">26865</td>
-<td align="right">11.570248</td>
-<td align="right">-1.6528926</td>
-<td align="right">14.935808</td>
-<td align="right">89</td>
-</tr>
-<tr class="even">
-<td align="left">49583</td>
-<td align="right">7.438016</td>
-<td align="right">-5.7851240</td>
-<td align="right">9.459110</td>
-<td align="right">12</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(SR_all_sum<span class="op">$</span>median_diff_rarity,
-     <span class="dt">breaks =</span> <span class="dv">20</span>, <span class="dt">main =</span> <span class="st">''</span>,
-     <span class="dt">xlab =</span> <span class="st">'Median Rarity Difference'</span>)</code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1"><span class="co"># Run for a single recorder</span></a>
+<a class="sourceLine" id="cb33-2" title="2">SR &lt;-<span class="st"> </span><span class="kw"><a href="reference/speciesRarity.html">speciesRarity</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,</a>
+<a class="sourceLine" id="cb33-3" title="3">                   <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb33-4" title="4">                   <span class="dt">sp_col =</span> <span class="st">'species'</span>,</a>
+<a class="sourceLine" id="cb33-5" title="5">                   <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)</a>
+<a class="sourceLine" id="cb33-6" title="6"></a>
+<a class="sourceLine" id="cb33-7" title="7"><span class="co"># Run the metric for all recorders</span></a>
+<a class="sourceLine" id="cb33-8" title="8">SR_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),</a>
+<a class="sourceLine" id="cb33-9" title="9">                 <span class="dt">FUN =</span> speciesRarity,</a>
+<a class="sourceLine" id="cb33-10" title="10">                 <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb33-11" title="11">                 <span class="dt">sp_col =</span> <span class="st">'species'</span>,</a>
+<a class="sourceLine" id="cb33-12" title="12">                 <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)</a>
+<a class="sourceLine" id="cb33-13" title="13"></a>
+<a class="sourceLine" id="cb33-14" title="14"><span class="co"># summarise as one table</span></a>
+<a class="sourceLine" id="cb33-15" title="15">SR_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, SR_all)</a>
+<a class="sourceLine" id="cb33-16" title="16"></a>
+<a class="sourceLine" id="cb33-17" title="17"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(SR_all_sum)</a></code></pre></div>
+<pre><code>##   recorder median_rarity median_diff_rarity     stdev   n
+## 1    11652      4.958678         -8.2644628        NA   1
+## 2     3007     12.396694         -0.8264463 12.832748  64
+## 3    22725     20.661157          7.4380165 16.231958 200
+## 4     1417     13.223140          0.0000000  9.988949  22
+## 5    26865     11.570248         -1.6528926 14.935808  89
+## 6    49583      7.438017         -5.7851240  9.459110  12</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(SR_all_sum<span class="op">$</span>median_diff_rarity,</a>
+<a class="sourceLine" id="cb35-2" title="2">     <span class="dt">breaks =</span> <span class="dv">20</span>, <span class="dt">main =</span> <span class="st">''</span>,</a>
+<a class="sourceLine" id="cb35-3" title="3">     <span class="dt">xlab =</span> <span class="st">'Median Rarity Difference'</span>)</a></code></pre></div>
 <p><img src="index_files/figure-html/speciesRarity-1.png" width="700"></p>
 </div>
 <div id="taxa-breadth" class="section level3">
@@ -781,70 +396,31 @@ SR_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.r
 <a href="#taxa-breadth" class="anchor"></a>Taxa Breadth</h3>
 <p><code>taxaBreadth</code></p>
 <p>These metrics describe the ‘experience’ the recorder has had recording species within the group.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculate the taxa breadth metrics for one recorder</span>
-TB &lt;-<span class="st"> </span><span class="kw"><a href="reference/taxaBreadth.html">taxaBreadth</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,
-                  <span class="dt">data =</span> cit_sci_data,
-                  <span class="dt">sp_col =</span> <span class="st">'species'</span>,
-                  <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)
-
-<span class="co"># Run for more than one recorder, this can be slow </span>
-TB_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),
-                <span class="dt">FUN =</span> taxaBreadth, 
-                <span class="dt">data =</span> cit_sci_data, 
-                <span class="dt">sp_col =</span> <span class="st">'species'</span>,
-                <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)
-
-<span class="co"># summarise as one table</span>
-TB_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, TB_all)
-<span class="kw">kable</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(TB_all_sum))</code></pre></div>
-<table class="table table">
-<thead><tr class="header">
-<th align="right">recorder</th>
-<th align="right">taxa_breadth</th>
-<th align="right">taxa_prop</th>
-<th align="right">n</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="right">11652</td>
-<td align="right">1</td>
-<td align="right">0.015625</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="right">3007</td>
-<td align="right">20</td>
-<td align="right">0.312500</td>
-<td align="right">64</td>
-</tr>
-<tr class="odd">
-<td align="right">22725</td>
-<td align="right">38</td>
-<td align="right">0.593750</td>
-<td align="right">200</td>
-</tr>
-<tr class="even">
-<td align="right">1417</td>
-<td align="right">9</td>
-<td align="right">0.140625</td>
-<td align="right">22</td>
-</tr>
-<tr class="odd">
-<td align="right">26865</td>
-<td align="right">22</td>
-<td align="right">0.343750</td>
-<td align="right">89</td>
-</tr>
-<tr class="even">
-<td align="right">49583</td>
-<td align="right">9</td>
-<td align="right">0.140625</td>
-<td align="right">12</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(TB_all_sum<span class="op">$</span>taxa_prop, <span class="dt">breaks =</span> <span class="dv">40</span>, <span class="dt">main =</span> <span class="st">''</span>,
-     <span class="dt">xlab =</span> <span class="st">'Proportion of Taxa Recorded'</span>)</code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1"><span class="co"># Calculate the taxa breadth metrics for one recorder</span></a>
+<a class="sourceLine" id="cb36-2" title="2">TB &lt;-<span class="st"> </span><span class="kw"><a href="reference/taxaBreadth.html">taxaBreadth</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,</a>
+<a class="sourceLine" id="cb36-3" title="3">                  <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb36-4" title="4">                  <span class="dt">sp_col =</span> <span class="st">'species'</span>,</a>
+<a class="sourceLine" id="cb36-5" title="5">                  <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)</a>
+<a class="sourceLine" id="cb36-6" title="6"></a>
+<a class="sourceLine" id="cb36-7" title="7"><span class="co"># Run for more than one recorder, this can be slow </span></a>
+<a class="sourceLine" id="cb36-8" title="8">TB_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),</a>
+<a class="sourceLine" id="cb36-9" title="9">                <span class="dt">FUN =</span> taxaBreadth, </a>
+<a class="sourceLine" id="cb36-10" title="10">                <span class="dt">data =</span> cit_sci_data, </a>
+<a class="sourceLine" id="cb36-11" title="11">                <span class="dt">sp_col =</span> <span class="st">'species'</span>,</a>
+<a class="sourceLine" id="cb36-12" title="12">                <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>)</a>
+<a class="sourceLine" id="cb36-13" title="13"></a>
+<a class="sourceLine" id="cb36-14" title="14"><span class="co"># summarise as one table</span></a>
+<a class="sourceLine" id="cb36-15" title="15">TB_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, TB_all)</a>
+<a class="sourceLine" id="cb36-16" title="16"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(TB_all_sum)</a></code></pre></div>
+<pre><code>##   recorder taxa_breadth taxa_prop   n
+## 1    11652            1  0.015625   1
+## 2     3007           20  0.312500  64
+## 3    22725           38  0.593750 200
+## 4     1417            9  0.140625  22
+## 5    26865           22  0.343750  89
+## 6    49583            9  0.140625  12</code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(TB_all_sum<span class="op">$</span>taxa_prop, <span class="dt">breaks =</span> <span class="dv">40</span>, <span class="dt">main =</span> <span class="st">''</span>,</a>
+<a class="sourceLine" id="cb38-2" title="2">     <span class="dt">xlab =</span> <span class="st">'Proportion of Taxa Recorded'</span>)</a></code></pre></div>
 <p><img src="index_files/figure-html/taxaBreadth-1.png" width="700"></p>
 </div>
 </div>
@@ -853,72 +429,33 @@ TB_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.r
 <a href="#weekly-devoted-days" class="anchor"></a>Weekly Devoted Days</h2>
 <p><code>weeklyDevotedDays</code></p>
 <p>These metrics describe frequency of recording in weeks in which the recorder made observations.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Run for one recorder</span>
-WDD &lt;-<span class="st"> </span><span class="kw"><a href="reference/weeklyDevotedDays.html">weeklyDevotedDays</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,
-                         <span class="dt">data =</span> cit_sci_data,
-                         <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,
-                         <span class="dt">date_col =</span> <span class="st">'date'</span>)
-
-<span class="co"># Run for more than one recorder, this can be slow</span>
-WDD_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),
-                  <span class="dt">FUN =</span> weeklyDevotedDays,
-                  <span class="dt">data =</span> cit_sci_data,
-                  <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,
-                  <span class="dt">date_col =</span> <span class="st">'date'</span>)
-
-<span class="co"># summarise as one table</span>
-WDD_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, WDD_all)
-
-<span class="kw">kable</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(WDD_all_sum))</code></pre></div>
-<table class="table table">
-<thead><tr class="header">
-<th align="right">recorder</th>
-<th align="right">median_weekly_devoted_days</th>
-<th align="right">n_weeks</th>
-<th align="right">n_recs</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="right">11652</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="right">3007</td>
-<td align="right">1</td>
-<td align="right">48</td>
-<td align="right">56</td>
-</tr>
-<tr class="odd">
-<td align="right">22725</td>
-<td align="right">1</td>
-<td align="right">75</td>
-<td align="right">125</td>
-</tr>
-<tr class="even">
-<td align="right">1417</td>
-<td align="right">1</td>
-<td align="right">13</td>
-<td align="right">19</td>
-</tr>
-<tr class="odd">
-<td align="right">26865</td>
-<td align="right">1</td>
-<td align="right">41</td>
-<td align="right">68</td>
-</tr>
-<tr class="even">
-<td align="right">49583</td>
-<td align="right">1</td>
-<td align="right">10</td>
-<td align="right">11</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(WDD_all_sum<span class="op">$</span>median_weekly_devoted_days,
-     <span class="dt">main =</span> <span class="st">''</span>,
-     <span class="dt">xlab =</span> <span class="st">'Median Weekly Devoted days'</span>)</code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" title="1"><span class="co"># Run for one recorder</span></a>
+<a class="sourceLine" id="cb39-2" title="2">WDD &lt;-<span class="st"> </span><span class="kw"><a href="reference/weeklyDevotedDays.html">weeklyDevotedDays</a></span>(<span class="dt">recorder_name =</span> <span class="dv">3007</span>,</a>
+<a class="sourceLine" id="cb39-3" title="3">                         <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb39-4" title="4">                         <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,</a>
+<a class="sourceLine" id="cb39-5" title="5">                         <span class="dt">date_col =</span> <span class="st">'date'</span>)</a>
+<a class="sourceLine" id="cb39-6" title="6"></a>
+<a class="sourceLine" id="cb39-7" title="7"><span class="co"># Run for more than one recorder, this can be slow</span></a>
+<a class="sourceLine" id="cb39-8" title="8">WDD_all &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(cit_sci_data<span class="op">$</span>recorder),</a>
+<a class="sourceLine" id="cb39-9" title="9">                  <span class="dt">FUN =</span> weeklyDevotedDays,</a>
+<a class="sourceLine" id="cb39-10" title="10">                  <span class="dt">data =</span> cit_sci_data,</a>
+<a class="sourceLine" id="cb39-11" title="11">                  <span class="dt">recorder_col =</span> <span class="st">'recorder'</span>,</a>
+<a class="sourceLine" id="cb39-12" title="12">                  <span class="dt">date_col =</span> <span class="st">'date'</span>)</a>
+<a class="sourceLine" id="cb39-13" title="13"></a>
+<a class="sourceLine" id="cb39-14" title="14"><span class="co"># summarise as one table</span></a>
+<a class="sourceLine" id="cb39-15" title="15">WDD_all_sum &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(rbind, WDD_all)</a>
+<a class="sourceLine" id="cb39-16" title="16"></a>
+<a class="sourceLine" id="cb39-17" title="17"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(WDD_all_sum)</a></code></pre></div>
+<pre><code>##   recorder median_weekly_devoted_days n_weeks n_recs
+## 1    11652                          1       1      1
+## 2     3007                          1      48     56
+## 3    22725                          1      75    125
+## 4     1417                          1      13     19
+## 5    26865                          1      41     68
+## 6    49583                          1      10     11</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/hist">hist</a></span>(WDD_all_sum<span class="op">$</span>median_weekly_devoted_days,</a>
+<a class="sourceLine" id="cb41-2" title="2">     <span class="dt">main =</span> <span class="st">''</span>,</a>
+<a class="sourceLine" id="cb41-3" title="3">     <span class="dt">xlab =</span> <span class="st">'Median Weekly Devoted days'</span>)</a></code></pre></div>
 <p><img src="index_files/figure-html/weeklyDevotedDays-1.png" width="700"></p>
 </div>
 </div>

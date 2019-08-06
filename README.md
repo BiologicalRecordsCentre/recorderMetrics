@@ -1,12 +1,3 @@
----
-title: "Calculating recorder Metrics using 'recorderMetrics'"
-author: "Tom August"
-date: "06 August, 2019"
-output: 
-  html_document: 
-    keep_md: yes
----
-
 # Overview
 
 This R-package is for the analysis of recorder behaviour in citizen science projects. This package takes data from citizen science projects that have 'what' (typically species), 'where', 'when', and 'who' fields. From this data the various functions in this package create metrics that quantify the behaviour of the participants (the 'who'). 
@@ -21,9 +12,9 @@ install.packages(c('adehabitatHR',
                    'sp',
                    'rgdal'))
 
-# Install the development version of the package from Github
 devtools::install_github('biologicalrecordscentre/recorderMetrics')
 ```
+
 
 
 ## Who is this for?
@@ -91,33 +82,43 @@ metrics_axes <- predictAxes(data = cit_sci_data,
 str(metrics_axes$recorder_metrics)
 ```
 
-'data.frame':	10 obs. of  12 variables:
- $ recorder                  : int  11652 3007 22725 1417 26865 49583 31176 42818 10935 10488
- $ activity_ratio            : num  1 0.107 0.256 0.209 0.207 ...
- $ active_days               : int  1 49 114 18 62 11 11 11 1 76
- $ median_weekly_devoted_days: num  NA 1 1 1 1 1 1 1 NA 1
- $ periodicity               : num  NA 9 3 4 3 9 12 20 NA 5
- $ periodicity_variation     : num  NA 9.43 4.33 3.95 8.46 ...
- $ upper_area                : num  NA 3608 7961 729 1804 ...
- $ upper_n_poly              : int  NA 5 13 2 4 1 1 1 NA 18
- $ ratio                     : num  NA 0.185 0.186 0.237 0.14 ...
- $ taxa_prop                 : num  NA 0.312 0.594 0.141 0.344 ...
- $ median_diff_rarity        : num  NA -0.826 7.438 0 -1.653 ...
- $ p1                        : num  NA 0.984 0.816 0.9 0.853 ...
+```
+## 'data.frame':	10 obs. of  12 variables:
+##  $ recorder                  : int  11652 3007 22725 1417 26865 49583 31176 42818 10935 10488
+##  $ activity_ratio            : num  1 0.107 0.256 0.209 0.207 ...
+##  $ active_days               : int  1 49 114 18 62 11 11 11 1 76
+##  $ median_weekly_devoted_days: num  NA 1 1 1 1 1 1 1 NA 1
+##  $ periodicity               : num  NA 9 3 4 3 9 12 20 NA 5
+##  $ periodicity_variation     : num  NA 9.43 4.33 3.95 8.46 ...
+##  $ upper_area                : num  NA 3608 7961 729 1804 ...
+##  $ upper_n_poly              : int  NA 5 13 2 4 1 1 1 NA 18
+##  $ ratio                     : num  NA 0.185 0.186 0.237 0.14 ...
+##  $ taxa_prop                 : num  NA 0.312 0.594 0.141 0.344 ...
+##  $ median_diff_rarity        : num  NA -0.826 7.438 0 -1.653 ...
+##  $ p1                        : num  NA 0.984 0.816 0.9 0.853 ...
+```
 
 ```r
 # ...and the axes values
-kable(head(metrics_axes$axes))
+head(metrics_axes$axes)
 ```
 
-       recorder   recording_intensity   spatial_extent   recording_potential   rarity_recording
-----  ---------  --------------------  ---------------  --------------------  -----------------
-95         3007            -0.7264398        1.6086909            -0.9654431          0.8602738
-951       22725             1.1652711        2.9220979             1.6412431          1.7984001
-952        1417             0.8899649       -0.7295146            -1.6363167          0.7576400
-953       26865             0.5633719        1.3143094            -0.5077554          0.4051430
-954       49583            -1.3381062       -2.0257823            -2.0829712         -0.1435788
-955       31176            -2.2802431       -2.1251578            -1.1265838          0.8211310
+```
+##     recorder recording_intensity spatial_extent recording_potential
+## 95      3007          -0.7264398      1.6086909          -0.9654431
+## 951    22725           1.1652711      2.9220979           1.6412431
+## 952     1417           0.8899649     -0.7295146          -1.6363167
+## 953    26865           0.5633719      1.3143094          -0.5077554
+## 954    49583          -1.3381062     -2.0257823          -2.0829712
+## 955    31176          -2.2802431     -2.1251578          -1.1265838
+##     rarity_recording
+## 95         0.8602738
+## 951        1.7984001
+## 952        0.7576400
+## 953        0.4051430
+## 954       -0.1435788
+## 955        0.8211310
+```
 
 ```r
 # Run the metric all recorders. NOTE: this takes a long time
@@ -143,44 +144,55 @@ SD <- summerData(input_data = cit_sci_data,
                  probs = c(0.025, 0.975),
                  date_col = 'date')
 
-kable(head(SD))
+head(SD)
 ```
 
-          recorder   species  date                long        lat  km_sq     Jday   year  summer 
--------  ---------  --------  -----------  -----------  ---------  -------  -----  -----  -------
-82138        11652         1  2017-08-19    -2.4872953   51.31455  ST6657     230   2017  TRUE   
-150797        3007        52  2014-06-12    -2.2452737   50.62048  SY8280     162   2014  TRUE   
-80713        22725        43  2015-07-05    -1.9939669   50.64902  SZ0083     185   2015  TRUE   
-161905       22725        26  2017-04-18    -2.4787477   50.81198  ST6601     107   2017  TRUE   
-217           1417         2  2017-03-31    -1.3645562   53.51558  SE4202      89   2017  TRUE   
-134124       26865        56  2017-08-05    -0.1137257   50.90479  TQ3213     216   2017  TRUE   
+```
+##        recorder species       date       long      lat  km_sq Jday year
+## 82138     11652       1 2017-08-19 -2.4872953 51.31455 ST6657  230 2017
+## 150797     3007      52 2014-06-12 -2.2452737 50.62048 SY8280  162 2014
+## 80713     22725      43 2015-07-05 -1.9939669 50.64902 SZ0083  185 2015
+## 161905    22725      26 2017-04-18 -2.4787477 50.81198 ST6601  107 2017
+## 217        1417       2 2017-03-31 -1.3645562 53.51558 SE4202   89 2017
+## 134124    26865      56 2017-08-05 -0.1137257 50.90479 TQ3213  216 2017
+##        summer
+## 82138    TRUE
+## 150797   TRUE
+## 80713    TRUE
+## 161905   TRUE
+## 217      TRUE
+## 134124   TRUE
+```
 
 ```r
 # Data not in the summer period is removed
 nrow(cit_sci_data)
 ```
 
-[1] 10000
+```
+## [1] 10000
+```
 
 ```r
 nrow(SD)
 ```
 
-[1] 9536
+```
+## [1] 9536
+```
 
 ```r
 # The cutoffs used to define summer are also returned
-kable(attr(SD, which = 'cutoffs'))
+attr(SD, which = 'cutoffs')
 ```
 
-
-
- year   quantile_first   quantile_last
------  ---------------  --------------
- 2014              102         275.000
- 2015               94         273.000
- 2016               92         278.000
- 2017               83         241.325
+```
+##   year quantile_first quantile_last
+## 1 2014            102       275.000
+## 2 2015             94       273.000
+## 3 2016             92       278.000
+## 4 2017             83       241.325
+```
 
 ### Activity ratio
 
@@ -209,19 +221,18 @@ ar_all <- lapply(unique(cit_sci_data$recorder),
 # summarise as one table
 ar_all_sum <- do.call(rbind, ar_all)
 
-kable(head(ar_all_sum))
+head(ar_all_sum)
 ```
 
-
-
- recorder   activity_ratio   total_duration   summer_duration   active_days
----------  ---------------  ---------------  ----------------  ------------
-    11652        1.0000000                1                 1             1
-     3007        0.0804598             1236               696            56
-    22725        0.1840943             1223               679           125
-     1417        0.1583333              120               120            19
-    26865        0.1333333              867               510            68
-    49583        0.0604396              352               182            11
+```
+##   recorder activity_ratio total_duration summer_duration active_days
+## 1    11652     1.00000000              1               1           1
+## 2     3007     0.08045977           1236             696          56
+## 3    22725     0.18409426           1223             679         125
+## 4     1417     0.15833333            120             120          19
+## 5    26865     0.13333333            867             510          68
+## 6    49583     0.06043956            352             182          11
+```
 
 ```r
 hist(ar_all_sum$active_days, breaks = 80,
@@ -262,19 +273,18 @@ LL_all <- lapply(unique(cit_sci_data$recorder),
 # summarise as one table
 LL_all_sum <- do.call(rbind, LL_all)
 
-kable(head(LL_all_sum))
+head(LL_all_sum)
 ```
 
-
-
- recorder    mean_LL   median_LL    variance          p1          p4   n_lists
----------  ---------  ----------  ----------  ----------  ----------  --------
-    11652         NA          NA          NA          NA          NA         1
-     3007   1.015873           1   0.0158730   0.9841270   0.0000000        63
-    22725   1.226994           1   0.2876619   0.8159509   0.0122699       163
-     1417   1.100000           1   0.0947368   0.9000000   0.0000000        20
-    26865   1.186667           1   0.2619820   0.8533333   0.0133333        75
-    49583   1.090909           1   0.0909091   0.9090909   0.0000000        11
+```
+##   recorder  mean_LL median_LL   variance        p1         p4 n_lists
+## 1    11652       NA        NA         NA        NA         NA       1
+## 2     3007 1.015873         1 0.01587302 0.9841270 0.00000000      63
+## 3    22725 1.226994         1 0.28766190 0.8159509 0.01226994     163
+## 4     1417 1.100000         1 0.09473684 0.9000000 0.00000000      20
+## 5    26865 1.186667         1 0.26198198 0.8533333 0.01333333      75
+## 6    49583 1.090909         1 0.09090909 0.9090909 0.00000000      11
+```
 
 ```r
 hist(LL_all_sum$n_lists, breaks = 80, main = '',
@@ -309,19 +319,25 @@ P_all <- lapply(unique(cit_sci_data$recorder),
 # summarise as one table
 P_all_sum <- do.call(rbind, P_all)
 
-kable(head(P_all_sum))
+head(P_all_sum)
 ```
 
-
-
- recorder   periodicity   periodicity_variation   median_streak   sd_streak   max_streak   n_days
----------  ------------  ----------------------  --------------  ----------  -----------  -------
-    11652            NA                      NA              NA          NA           NA        1
-     3007           9.0               10.424964               1   0.2800560            3       56
-    22725           4.0                9.935425               1   0.6032567            5      125
-     1417           4.5                7.837608               1   0.5622957            3       19
-    26865           4.0               12.050814               1   0.8372419            4       68
-    49583           9.0               19.504985               1   0.5000000            2       11
+```
+##   recorder periodicity periodicity_variation median_streak sd_streak
+## 1    11652          NA                    NA            NA        NA
+## 2     3007         9.0             10.424964             1 0.2800560
+## 3    22725         4.0              9.935425             1 0.6032567
+## 4     1417         4.5              7.837608             1 0.5622957
+## 5    26865         4.0             12.050814             1 0.8372419
+## 6    49583         9.0             19.504985             1 0.5000000
+##   max_streak n_days
+## 1         NA      1
+## 2          3     56
+## 3          5    125
+## 4          3     19
+## 5          4     68
+## 6          2     11
+```
 
 ```r
 hist(P_all_sum$max_streak, main = '', xlab = 'Max streak length')
@@ -374,19 +390,18 @@ SB_all_sum <- do.call(rbind, SB_all)
 
 # This contains the polygons which I drop here
 # so we can see the other results in a table
-kable(head(SB_all_sum)[,c(1,6:10)])
+head(SB_all_sum)[,c(1,6:10)]
 ```
 
-
-
-recorder   lower_n_poly   upper_area       lower_area       ratio                         n   
----------  -------------  ---------------  ---------------  ----------------------------  ----
-11652      NA             NA               NA               NA                            1   
-3007       1              c(`95` = 3608)   c(`60` = 668)    c(`60` = 0.185144124168514)   64  
-22725      1              c(`95` = 7961)   c(`60` = 1477)   c(`60` = 0.18552945609848)    200 
-1417       1              c(`95` = 729)    c(`60` = 173)    c(`60` = 0.237311385459534)   22  
-26865      1              c(`95` = 1804)   c(`60` = 252)    c(`60` = 0.139689578713969)   89  
-49583      1              c(`95` = 521)    c(`60` = 155)    c(`60` = 0.297504798464491)   12  
+```
+##      recorder lower_n_poly upper_area lower_area ratio     n  
+## [1,] 11652    NA           NA         NA         NA        1  
+## [2,] 3007     1            3608       668        0.1851441 64 
+## [3,] 22725    1            7961       1477       0.1855295 200
+## [4,] 1417     1            729        173        0.2373114 22 
+## [5,] 26865    1            1804       252        0.1396896 89 
+## [6,] 49583    1            521        155        0.2975048 12
+```
 
 
 ### Species Rarity
@@ -413,19 +428,18 @@ SR_all <- lapply(unique(cit_sci_data$recorder),
 # summarise as one table
 SR_all_sum <- do.call(rbind, SR_all)
 
-kable(head(SR_all_sum))
+head(SR_all_sum)
 ```
 
-
-
-recorder    median_rarity   median_diff_rarity       stdev     n
----------  --------------  -------------------  ----------  ----
-11652            4.958678           -8.2644628          NA     1
-3007            12.396694           -0.8264463   12.832748    64
-22725           20.661157            7.4380165   16.231958   200
-1417            13.223140            0.0000000    9.988949    22
-26865           11.570248           -1.6528926   14.935808    89
-49583            7.438016           -5.7851240    9.459110    12
+```
+##   recorder median_rarity median_diff_rarity     stdev   n
+## 1    11652      4.958678         -8.2644628        NA   1
+## 2     3007     12.396694         -0.8264463 12.832748  64
+## 3    22725     20.661157          7.4380165 16.231958 200
+## 4     1417     13.223140          0.0000000  9.988949  22
+## 5    26865     11.570248         -1.6528926 14.935808  89
+## 6    49583      7.438017         -5.7851240  9.459110  12
+```
 
 ```r
 hist(SR_all_sum$median_diff_rarity,
@@ -458,19 +472,18 @@ TB_all <- lapply(unique(cit_sci_data$recorder),
 
 # summarise as one table
 TB_all_sum <- do.call(rbind, TB_all)
-kable(head(TB_all_sum))
+head(TB_all_sum)
 ```
 
-
-
- recorder   taxa_breadth   taxa_prop     n
----------  -------------  ----------  ----
-    11652              1    0.015625     1
-     3007             20    0.312500    64
-    22725             38    0.593750   200
-     1417              9    0.140625    22
-    26865             22    0.343750    89
-    49583              9    0.140625    12
+```
+##   recorder taxa_breadth taxa_prop   n
+## 1    11652            1  0.015625   1
+## 2     3007           20  0.312500  64
+## 3    22725           38  0.593750 200
+## 4     1417            9  0.140625  22
+## 5    26865           22  0.343750  89
+## 6    49583            9  0.140625  12
+```
 
 ```r
 hist(TB_all_sum$taxa_prop, breaks = 40, main = '',
@@ -503,19 +516,18 @@ WDD_all <- lapply(unique(cit_sci_data$recorder),
 # summarise as one table
 WDD_all_sum <- do.call(rbind, WDD_all)
 
-kable(head(WDD_all_sum))
+head(WDD_all_sum)
 ```
 
-
-
- recorder   median_weekly_devoted_days   n_weeks   n_recs
----------  ---------------------------  --------  -------
-    11652                            1         1        1
-     3007                            1        48       56
-    22725                            1        75      125
-     1417                            1        13       19
-    26865                            1        41       68
-    49583                            1        10       11
+```
+##   recorder median_weekly_devoted_days n_weeks n_recs
+## 1    11652                          1       1      1
+## 2     3007                          1      48     56
+## 3    22725                          1      75    125
+## 4     1417                          1      13     19
+## 5    26865                          1      41     68
+## 6    49583                          1      10     11
+```
 
 ```r
 hist(WDD_all_sum$median_weekly_devoted_days,
