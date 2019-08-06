@@ -31,7 +31,7 @@ A data.frame with seven columns
 }
 }
 \description{
-This function takes in data for a recorder and calculates the periodicity metrics.
+This function takes in data for a recorder and calculates the periodicity metrics. All metrics are calculated within years.
 }
 \details{
 In this function a streak is defined as a series of consecutive days on which a person made observations. A streak of 1 is a single days recording in isolation. 2 is 2 days back-to-back, 3 is 3 days in a row and so on.
