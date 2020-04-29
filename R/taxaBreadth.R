@@ -34,6 +34,83 @@
 #'
 #' hist(TB_all_sum$taxa_prop, breaks = 40)
 #'
+#' ## Accounting for spatial restriction in movement
+#' # If recorders where restricted to the countries that
+#' # make up GB (Scotland England and Wales). We should
+#' # analyse the data by country
+#' library(sp)
+#' plot(GB)
+#' 
+#' # Convert our citizen science data to a SpatialPointsDataframe
+#' SP <- SpatialPointsDataFrame(data = cit_sci_data,
+#'                              coords = cit_sci_data[,c('long','lat')])
+#' # Define lat long coordinate system
+#' CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+#' proj4string(SP) <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+#' 
+#' # Empty object for all results
+#' TB_all_countries <- NULL
+#' 
+#' # Loop through counties
+#' for(i in unique(GB$NAME)){
+#'   
+#'   # Subset by country
+#'   SP_C <- SP[GB[GB$NAME == i, ], ]
+#'   
+#'   # Calculate the metric within country
+#'   TB_one_country <- lapply(unique(SP_C$recorder),
+#'                            FUN = taxaBreadth,
+#'                            data = SP_C@data,
+#'                            sp_col = 'species',
+#'                            recorder_col = 'recorder')
+#'   
+#'   # combine data
+#'   TB_one_country <- do.call(rbind, TB_one_country)
+#'   TB_one_country$country <- i
+#'   TB_all_countries <- rbind(TB_all_countries,
+#'                             TB_one_country)
+#' }
+#' 
+#' # Note that recorders that have recorded in more than
+#' # one country are replicated in our results (n = 75)
+#' sum(table(TB_all_countries$recorder) > 1)
+#' 
+#' 
+#' # Alternativly we can subset data by a buffer around the 
+#' # recorders records, rather than by country.
+#' # Here I use a buffer of 30km
+#' library(raster)
+#' library(rgeos)
+#' 
+#' # Empty object for all results
+#' TB_all_30km_buffer <- NULL
+#' 
+#' for(i in unique(SP$recorder)){
+#'   
+#'   SP_R <- SP[SP$recorder == i, ]
+#'   SP_R_buffer <- buffer(SP_R, 30000)  
+#'   SP_P <- SP[SP_R_buffer, ]
+#'   
+#'   TB_one_buffer <- taxaBreadth(recorder_name = i,
+#'                                data = SP_P@data,
+#'                                sp_col = 'species',
+#'                                recorder_col = 'recorder')
+#'   
+#'   TB_all_30km_buffer <- rbind(TB_all_30km_buffer,
+#'                               TB_one_buffer)
+#' }
+#' 
+#' # Compare results with original analysis
+#' combo <- merge(y = TB_all_30km_buffer,
+#'                x = TB_all_sum, 
+#'                by = 'recorder')
+#' 
+#' plot(combo$taxa_prop.x[combo$n.x > 10],
+#'      combo$taxa_prop.y[combo$n.x > 10],
+#'      xlab = 'Original',
+#'      ylab = 'By buffer',
+#'      main = 'Proportion of taxa recorded')
+#' abline(0,1)
 #' 
 #' } 
 #' 

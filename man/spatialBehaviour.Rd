@@ -4,9 +4,20 @@
 \alias{spatialBehaviour}
 \title{Calculate spatial metrics}
 \usage{
-spatialBehaviour(recorder_name, data, y_col, x_col, crs, new_crs,
-  recorder_col = "recorders", upper_percentile = 95,
-  lower_percentile = 60, h = 5000, res = 1000, threshold = 5)
+spatialBehaviour(
+  recorder_name,
+  data,
+  y_col,
+  x_col,
+  crs,
+  new_crs,
+  recorder_col = "recorders",
+  upper_percentile = 95,
+  lower_percentile = 60,
+  h = 5000,
+  res = 1000,
+  threshold = 5
+)
 }
 \arguments{
 \item{recorder_name}{the name of the recorder for whom you want to calculate the metrics}

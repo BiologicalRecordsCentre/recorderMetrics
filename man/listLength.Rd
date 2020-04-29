@@ -4,9 +4,16 @@
 \alias{listLength}
 \title{Calculate list length metrics}
 \usage{
-listLength(recorder_name, data, threshold = 10, plot = FALSE,
-  sp_col = "preferred_taxon", date_col = "date_start",
-  recorder_col = "recorders", location_col = "kmsq")
+listLength(
+  recorder_name,
+  data,
+  threshold = 10,
+  plot = FALSE,
+  sp_col = "preferred_taxon",
+  date_col = "date_start",
+  recorder_col = "recorders",
+  location_col = "kmsq"
+)
 }
 \arguments{
 \item{recorder_name}{the name of the recorder for whom you want to calculate the metrics}

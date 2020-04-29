@@ -4,8 +4,13 @@
 \alias{periodicity}
 \title{Calculate periodicity metrics}
 \usage{
-periodicity(recorder_name, data, date_col = "date_start",
-  recorder_col = "recorders", day_limit = 5)
+periodicity(
+  recorder_name,
+  data,
+  date_col = "date_start",
+  recorder_col = "recorders",
+  day_limit = 5
+)
 }
 \arguments{
 \item{recorder_name}{the name of the recorder for whom you want to calculate the metrics}

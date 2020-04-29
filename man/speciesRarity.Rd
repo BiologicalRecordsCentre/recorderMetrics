@@ -4,8 +4,12 @@
 \alias{speciesRarity}
 \title{Calculate the rarity of species recorded by a volunteer}
 \usage{
-speciesRarity(recorder_name, data, sp_col = "preferred_taxon",
-  recorder_col = "recorders")
+speciesRarity(
+  recorder_name,
+  data,
+  sp_col = "preferred_taxon",
+  recorder_col = "recorders"
+)
 }
 \arguments{
 \item{recorder_name}{the name of the recorder for whom you want to calculate the metrics}

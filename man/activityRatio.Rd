@@ -4,8 +4,13 @@
 \alias{activityRatio}
 \title{Calculate activity ratio metrics}
 \usage{
-activityRatio(recorder_name, data, recorder_col = "recorders",
-  date_col = "date_start", summer_days = NULL)
+activityRatio(
+  recorder_name,
+  data,
+  recorder_col = "recorders",
+  date_col = "date_start",
+  summer_days = NULL
+)
 }
 \arguments{
 \item{recorder_name}{the name of the recorder for whom you want to calculate the metrics}

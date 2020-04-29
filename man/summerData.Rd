@@ -4,8 +4,7 @@
 \alias{summerData}
 \title{Identify data that is recorded during the summer period}
 \usage{
-summerData(input_data, probs = c(0.025, 0.975),
-  date_col = "date_start")
+summerData(input_data, probs = c(0.025, 0.975), date_col = "date_start")
 }
 \arguments{
 \item{input_data}{the data.frame of recording information}

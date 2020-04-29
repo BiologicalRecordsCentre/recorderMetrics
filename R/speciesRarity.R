@@ -32,6 +32,84 @@
 #' SR_all_sum <- do.call(rbind, SR_all)
 #'
 #' hist(SR_all_sum$median_diff_rarity, breaks = 20) 
+#' 
+#' ## Accounting for spatial restriction in movement
+#' # If recorders where restricted to the countries that
+#' # make up GB (Scotland England and Wales). We should
+#' # analyse the data by country
+#' library(sp)
+#' plot(GB)
+#' 
+#' # Convert our citizen science data to a SpatialPointsDataframe
+#' SP <- SpatialPointsDataFrame(data = cit_sci_data,
+#'                              coords = cit_sci_data[,c('long','lat')])
+#' # Define lat long coordinate system
+#' CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+#' proj4string(SP) <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+#' 
+#' # Empty object for all results
+#' SR_all_countries <- NULL
+#' 
+#' # Loop through counties
+#' for(i in unique(GB$NAME)){
+#'   
+#'   # Subset by country
+#'   SP_C <- SP[GB[GB$NAME == i, ], ]
+#'   
+#'   # Calculate the metric within country
+#'   SR_one_country <- lapply(unique(SP_C$recorder),
+#'                            FUN = speciesRarity,
+#'                            data = SP_C@data,
+#'                            sp_col = 'species',
+#'                            recorder_col = 'recorder')
+#'   
+#'   # combine data
+#'   SR_one_country <- do.call(rbind, SR_one_country)
+#'   SR_one_country$country <- i
+#'   SR_all_countries <- rbind(SR_all_countries,
+#'                             SR_one_country)
+#' }
+#' 
+#' # Note that recorders that have recorded in more than
+#' # one country are replicated in our results (n = 75)
+#' sum(table(SR_all_countries$recorder) > 1)
+#' 
+#' # Alternativly we can subset data by a buffer around the
+#' # recorders records, rather than by country.
+#' # Here I use a buffer of 150km
+#' library(raster)
+#' library(rgeos)
+#' 
+#' # Empty object for all results
+#' SR_all_150km_buffer <- NULL
+#' 
+#' for(i in unique(SP$recorder)){
+#'   
+#'   SP_R <- SP[SP$recorder == i, ]
+#'   SP_R_buffer <- buffer(SP_R, 150000)
+#'   SP_P <- SP[SP_R_buffer, ]
+#'   
+#'   SR_one_buffer <- speciesRarity(recorder_name = i,
+#'                                  data = SP_P@data,
+#'                                  sp_col = 'species',
+#'                                  recorder_col = 'recorder')
+#'   
+#'   SR_all_30km_buffer <- rbind(SR_all_30km_buffer,
+#'                               SR_one_buffer)
+#' }
+#' 
+#' # Compare results with original analysis
+#' combo <- merge(y = SR_all_30km_buffer,
+#'                x = SR_all_sum,
+#'                by = 'recorder')
+#' 
+#' plot(combo$median_diff_rarity.x[combo$n.x > 10],
+#'      combo$median_diff_rarity.y[combo$n.x > 10],
+#'      xlab = 'Original',
+#'      ylab = 'By buffer',
+#'      main = 'Median Rarity Difference')
+#' abline(0,1)
+#' 
 #' }
 #' 
 #' @details This function examines the rarity of the species that a
@@ -75,7 +153,7 @@ function(recorder_name,
   grand_sd <- sd(rank_reps)
   
   recorder_data <- data[data[,recorder_col] == recorder_name,]
-  recorder_data$rank <- rank_species[recorder_data[ ,sp_col]]
+  recorder_data$rank <- rank_species[as.character(recorder_data[ ,sp_col])]
   
   return(data.frame(recorder = as.character(recorder_name),
                     median_rarity = median(recorder_data$rank),

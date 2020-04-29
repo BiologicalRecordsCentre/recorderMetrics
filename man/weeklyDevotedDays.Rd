@@ -4,8 +4,12 @@
 \alias{weeklyDevotedDays}
 \title{Metrics identifying the breadth and proportion of taxa recorded}
 \usage{
-weeklyDevotedDays(recorder_name, data, recorder_col = "recorders",
-  date_col = "date_start")
+weeklyDevotedDays(
+  recorder_name,
+  data,
+  recorder_col = "recorders",
+  date_col = "date_start"
+)
 }
 \arguments{
 \item{recorder_name}{the name of the recorder for whom you want to calculate the metrics}

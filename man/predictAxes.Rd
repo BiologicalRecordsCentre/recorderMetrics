@@ -4,12 +4,21 @@
 \alias{predictAxes}
 \title{Calculate recorder metrics and the 4-axes of recorder behaviour}
 \usage{
-predictAxes(data, recorders = NULL, verbose = TRUE,
-  recorder_col = "recorder", date_col = "date", y_col = "lat",
-  x_col = "long", square_km_col = "km_sq", active_days_limit = 10,
+predictAxes(
+  data,
+  recorders = NULL,
+  verbose = TRUE,
+  recorder_col = "recorder",
+  date_col = "date",
+  y_col = "lat",
+  x_col = "long",
+  square_km_col = "km_sq",
+  active_days_limit = 10,
   crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
-  new_crs = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs",
-  sp_col = "species")
+ 
+    new_crs = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs",
+  sp_col = "species"
+)
 }
 \arguments{
 \item{data}{The data.frame of recording information. See `head(cit_sci_data)`, for an example format. This should be the data for all observations made to your citizen science project.}
