@@ -1,3 +1,12 @@
+---
+title: "Calculating recorder Metrics using 'recorderMetrics'"
+author: "Tom August"
+date: "11 March, 2020"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
 # Overview
 
 This R-package is for the analysis of recorder behaviour in citizen science projects. This package takes data from citizen science projects that have 'what' (typically species), 'where', 'when', and 'who' fields. From this data the various functions in this package create metrics that quantify the behaviour of the participants (the 'who'). 
@@ -72,9 +81,9 @@ metrics_axes <- predictAxes(data = cit_sci_data,
 
 ```
 ## Warning in predictAxes(data = cit_sci_data, recorders =
-## unique(cit_sci_data$recorder)[1:10]): Metrics cannot be calculated
-## for recorders with fewer than the threshold number of active days. The
-## threshold is set to 10 and 2 recorders fail this
+## unique(cit_sci_data$recorder)[1:10]): Metrics cannot be calculated for recorders
+## with fewer than the threshold number of active days. The threshold is set to 10
+## and 2 recorders fail this
 ```
 
 ```r
@@ -148,20 +157,13 @@ head(SD)
 ```
 
 ```
-##        recorder species       date       long      lat  km_sq Jday year
-## 82138     11652       1 2017-08-19 -2.4872953 51.31455 ST6657  230 2017
-## 150797     3007      52 2014-06-12 -2.2452737 50.62048 SY8280  162 2014
-## 80713     22725      43 2015-07-05 -1.9939669 50.64902 SZ0083  185 2015
-## 161905    22725      26 2017-04-18 -2.4787477 50.81198 ST6601  107 2017
-## 217        1417       2 2017-03-31 -1.3645562 53.51558 SE4202   89 2017
-## 134124    26865      56 2017-08-05 -0.1137257 50.90479 TQ3213  216 2017
-##        summer
-## 82138    TRUE
-## 150797   TRUE
-## 80713    TRUE
-## 161905   TRUE
-## 217      TRUE
-## 134124   TRUE
+##        recorder species       date       long      lat  km_sq Jday year summer
+## 82138     11652       1 2017-08-19 -2.4872953 51.31455 ST6657  230 2017   TRUE
+## 150797     3007      52 2014-06-12 -2.2452737 50.62048 SY8280  162 2014   TRUE
+## 80713     22725      43 2015-07-05 -1.9939669 50.64902 SZ0083  185 2015   TRUE
+## 161905    22725      26 2017-04-18 -2.4787477 50.81198 ST6601  107 2017   TRUE
+## 217        1417       2 2017-03-31 -1.3645562 53.51558 SE4202   89 2017   TRUE
+## 134124    26865      56 2017-08-05 -0.1137257 50.90479 TQ3213  216 2017   TRUE
 ```
 
 ```r
@@ -323,20 +325,20 @@ head(P_all_sum)
 ```
 
 ```
-##   recorder periodicity periodicity_variation median_streak sd_streak
-## 1    11652          NA                    NA            NA        NA
-## 2     3007         9.0             10.424964             1 0.2800560
-## 3    22725         4.0              9.935425             1 0.6032567
-## 4     1417         4.5              7.837608             1 0.5622957
-## 5    26865         4.0             12.050814             1 0.8372419
-## 6    49583         9.0             19.504985             1 0.5000000
-##   max_streak n_days
-## 1         NA      1
-## 2          3     56
-## 3          5    125
-## 4          3     19
-## 5          4     68
-## 6          2     11
+##   recorder periodicity periodicity_variation median_streak sd_streak max_streak
+## 1    11652          NA                    NA            NA        NA         NA
+## 2     3007         9.0             10.424964             1 0.2800560          3
+## 3    22725         4.0              9.935425             1 0.6032567          5
+## 4     1417         4.5              7.837608             1 0.5622957          3
+## 5    26865         4.0             12.050814             1 0.8372419          4
+## 6    49583         9.0             19.504985             1 0.5000000          2
+##   n_days
+## 1      1
+## 2     56
+## 3    125
+## 4     19
+## 5     68
+## 6     11
 ```
 
 ```r
@@ -449,6 +451,103 @@ hist(SR_all_sum$median_diff_rarity,
 
 ![](README_files/figure-html/speciesRarity-1.png)<!-- -->
 
+When you are calculating this metric over large scales, for example across Europe or North America, the metric can become biased because the observable species vary spatially. As an alternative the metric can be calculated at a regional level (e.g. country/state), or using a buffer around the records of the recorder.
+
+
+```r
+## Accounting for spatial restriction in movement
+# If recorders where restricted to the countries that
+# make up GB (Scotland England and Wales). We should
+# analyse the data by country
+library(sp)
+
+# Convert our citizen science data to a SpatialPointsDataframe
+SP <- SpatialPointsDataFrame(data = cit_sci_data,
+                             coords = cit_sci_data[,c('long','lat')])
+# Define lat long coordinate system
+CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+```
+
+```
+## CRS arguments:
+##  +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0
+```
+
+```r
+proj4string(SP) <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+# Empty object for all results
+SR_all_countries <- NULL
+
+# Loop through counties
+for(i in unique(GB$NAME)){
+
+  # Subset by country
+  SP_C <- SP[GB[GB$NAME == i, ], ]
+
+  # Calculate the metric within country
+  SR_one_country <- lapply(unique(SP_C$recorder),
+                           FUN = speciesRarity,
+                           data = SP_C@data,
+                           sp_col = 'species',
+                           recorder_col = 'recorder')
+
+  # combine data
+  SR_one_country <- do.call(rbind, SR_one_country)
+  SR_one_country$country <- i
+  SR_all_countries <- rbind(SR_all_countries,
+                            SR_one_country)
+}
+
+# Note that recorders that have recorded in more than
+# one country are replicated in our results (n = 75)
+sum(table(SR_all_countries$recorder) > 1)
+```
+
+```
+## [1] 75
+```
+
+```r
+# Alternativly we can subset data by a buffer around the
+# recorders records, rather than by country.
+# Here I use a buffer of 150km
+library(raster)
+library(rgeos)
+
+# Empty object for all results
+SR_all_150km_buffer <- NULL
+
+for(i in unique(SP$recorder)){
+
+  SP_R <- SP[SP$recorder == i, ]
+  SP_R_buffer <- buffer(SP_R, 150000)
+  SP_P <- SP[SP_R_buffer, ]
+
+  SR_one_buffer <- speciesRarity(recorder_name = i,
+                                 data = SP_P@data,
+                                 sp_col = 'species',
+                                 recorder_col = 'recorder')
+
+  SR_all_150km_buffer <- rbind(SR_all_150km_buffer,
+                               SR_one_buffer)
+}
+
+# Compare results with original analysis
+combo <- merge(y = SR_all_150km_buffer,
+               x = SR_all_sum,
+               by = 'recorder')
+
+plot(combo$median_diff_rarity.x[combo$n.x > 10],
+     combo$median_diff_rarity.y[combo$n.x > 10],
+     xlab = 'Original',
+     ylab = 'By buffer',
+     main = 'Median Rarity Difference')
+abline(0,1)
+```
+
+![](README_files/figure-html/speciesRarity_spat-1.png)<!-- -->
+
 ### Taxa Breadth
 
 `taxaBreadth`
@@ -491,6 +590,100 @@ hist(TB_all_sum$taxa_prop, breaks = 40, main = '',
 ```
 
 ![](README_files/figure-html/taxaBreadth-1.png)<!-- -->
+
+When you are calculating this metric over large scales, for example across Europe or North America, the metric can become biased because the denominator (total number of species) varies spatially. As an alternative the metric can be calculated at a regional level (e.g. country/state), or using a buffer around the records of the recorder.
+
+
+```r
+library(sp)
+
+# Convert our citizen science data to a SpatialPointsDataframe
+SP <- SpatialPointsDataFrame(data = cit_sci_data,
+                            coords = cit_sci_data[,c('long','lat')])
+
+# Define lat long coordinate system
+CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+```
+
+```
+## CRS arguments:
+##  +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0
+```
+
+```r
+proj4string(SP) <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+# Empty object for all results
+TB_all_countries <- NULL
+
+# Loop through counties
+for(i in unique(GB$NAME)){
+
+ # Subset by country
+ SP_C <- SP[GB[GB$NAME == i, ], ]
+
+ # Calculate the metric within country
+ TB_one_country <- lapply(unique(SP_C$recorder),
+                          FUN = taxaBreadth,
+                          data = SP_C@data,
+                          sp_col = 'species',
+                          recorder_col = 'recorder')
+
+  # combine data
+ TB_one_country <- do.call(rbind, TB_one_country)
+ TB_one_country$country <- i
+ TB_all_countries <- rbind(TB_all_countries,
+                           TB_one_country)
+}
+
+# Note that recorders that have recorded in more than
+# one country are replicated in our results (n = 75)
+sum(table(TB_all_countries$recorder) > 1)
+```
+
+```
+## [1] 75
+```
+
+```r
+# Alternativly we can subset data by a buffer around the
+# recorders records, rather than by country.
+# Here I use a buffer of 30km
+library(raster)
+library(rgeos)
+
+# Empty object for all results
+TB_all_30km_buffer <- NULL
+
+for(i in unique(SP$recorder)){
+
+ SP_R <- SP[SP$recorder == i, ]
+ SP_R_buffer <- buffer(SP_R, 30000)
+ SP_P <- SP[SP_R_buffer, ]
+
+ TB_one_buffer <- taxaBreadth(recorder_name = i,
+                              data = SP_P@data,
+                              sp_col = 'species',
+                              recorder_col = 'recorder')
+
+ TB_all_30km_buffer <- rbind(TB_all_30km_buffer,
+                             TB_one_buffer)
+}
+
+# Compare results with original analysis
+combo <- merge(y = TB_all_30km_buffer,
+              x = TB_all_sum,
+              by = 'recorder')
+
+plot(combo$taxa_prop.x[combo$n.x > 10],
+     combo$taxa_prop.y[combo$n.x > 10],
+     xlab = 'Original',
+     ylab = 'By buffer',
+     main = 'Proportion of taxa recorded')
+abline(0,1)
+```
+
+![](README_files/figure-html/taxaBreadth_spat-1.png)<!-- -->
 
 ## Weekly Devoted Days
 
