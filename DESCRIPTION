@@ -1,7 +1,7 @@
 Package: recorderMetrics
 Type: Package
 Title: Calculate recorder behaviour metrics for participants of citizen science projects
-Version: 0.3
+Version: 1.0
 Date: 2019-05-29
 LazyData: true
 Authors@R: c(person("Tom", "August", role = c("aut", "cre"), email = "tomaug@ceh.ac.uk"))

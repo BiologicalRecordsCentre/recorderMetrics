@@ -1,17 +1,8 @@
----
-title: "Calculating recorder Metrics using 'recorderMetrics'"
-author: "Tom August"
-date: "11 March, 2020"
-output: 
-  html_document: 
-    keep_md: yes
----
-
 # Overview
 
 This R-package is for the analysis of recorder behaviour in citizen science projects. This package takes data from citizen science projects that have 'what' (typically species), 'where', 'when', and 'who' fields. From this data the various functions in this package create metrics that quantify the behaviour of the participants (the 'who'). 
 
-This package accompanies the paper _Data-derived metrics describing the behaviour of field-based citizen scientists provide insights for project design and modelling bias_ by TA August _et al_ in press 2019
+This package accompanies the paper [_Data‑derived metrics describing the behaviour of field‑based citizen scientists provide insights for project design and modelling bias_ by Tom August, Richard Fox, David B. Roy & Michael J. O. Pocock, in Scientic Reoprts 2020](https://www.nature.com/articles/s41598-020-67658-3.epdf?sharing_token=ytTMK1vruRhmwrp6f86m99RgN0jAjWel9jnR3ZoTv0Nh_80C7srSORW4Yh8vYYO13j0D5oXkwk0AfDzMzT2KOsznti7GbrkhvbXxRYL-aprcriXLyXsdflf09I6PauTrfrXU3zEKl1MeP2xCV4-gxADtLwmtL9PXkAb2SRchgHk%3D).
 
 
 ```r
@@ -70,7 +61,7 @@ In the case of the example the recorder column is an anonymised number, but you 
 
 ## Recreating the axes in August _et al_
 
-The four axes presented in _August et al_ may not be the most appropriate axes for all citizen science projects however if you wish to use them this can be done using the `predictAxes` function. This function is a wrapper for a lot of other functions that we will explore in a moment.
+The four axes presented in [_August et al_](https://www.nature.com/articles/s41598-020-67658-3.epdf?sharing_token=ytTMK1vruRhmwrp6f86m99RgN0jAjWel9jnR3ZoTv0Nh_80C7srSORW4Yh8vYYO13j0D5oXkwk0AfDzMzT2KOsznti7GbrkhvbXxRYL-aprcriXLyXsdflf09I6PauTrfrXU3zEKl1MeP2xCV4-gxADtLwmtL9PXkAb2SRchgHk%3D) may not be the most appropriate axes for all citizen science projects however if you wish to use them this can be done using the `predictAxes` function. This function is a wrapper for a lot of other functions that we will explore in a moment.
 
 
 ```r
