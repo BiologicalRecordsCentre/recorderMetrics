@@ -103,6 +103,11 @@ periodicity <- function(recorder_name,
       
     }
   
+    # If the date is malformed you may get NULL for elapses
+    if(is.null(elapses)){
+      stop('No elapses could be calculated. This could happen because you dates are malformed, check that the date column is correctly formatted')
+    } 
+    
     # periodicity calculation
     periodicity <- median(elapses)
     
