@@ -211,7 +211,7 @@ predictAxes <- function(data,
     
   }
   
-  close(progress)
+  if(length(recorders) > 1) close(progress)
   
   if(not_enough_data > 0){
     warning(paste("Metrics cannot be calculated for recorders with fewer than the threshold",
